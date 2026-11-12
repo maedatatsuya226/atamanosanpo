@@ -28,13 +28,31 @@ npm run build
 
 ## Cloudflare Pages への公開
 
+### GitHub と連携する(おすすめ)
+
+GitHub の main に保存(push)するたびに、Cloudflare が自動でビルドして公開する。
+
+Cloudflare の管理画面で「Workers & Pages」→「Create application」→「Pages」→「Connect to Git」→ GitHub の `atamanosanpo` を選び、次のように設定する。
+
+| 項目 | 値 |
+|---|---|
+| Project name | `atamanosanpo`(`wrangler.toml` の name と同じにする) |
+| Production branch | `main` |
+| Framework preset | なし(None) |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+Node.js のバージョンは `.node-version`(22)で指定済み。
+
+### 手元のPCから直接アップロードする
+
 初回だけ、Cloudflare アカウントでログインする(ブラウザが開く)。
 
 ```bash
 npx wrangler login
 ```
 
-公開(ビルドしてアップロード)。初回はプロジェクト `atama-no-sanpo` が作られ、`https://atama-no-sanpo.pages.dev` のようなURLになる(同じ名前が使われていれば、Cloudflareが別の文字を付け足す)。
+公開(ビルドしてアップロード)。初回はプロジェクト `atamanosanpo` が作られ、`https://atamanosanpo.pages.dev` のようなURLになる(同じ名前が使われていれば、Cloudflareが別の文字を付け足す)。
 
 ```bash
 npm run deploy

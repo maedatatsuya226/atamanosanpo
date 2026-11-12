@@ -1,5 +1,5 @@
 {
-  "name": "atama-no-sanpo",
+  "name": "atamanosanpo",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host",
     "test": "vitest run",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name atama-no-sanpo"
+    "deploy": "npm run build && wrangler pages deploy dist --project-name atamanosanpo"
   },
   "dependencies": {
     "react": "^19.3.1",

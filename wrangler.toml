@@ -1,4 +1,4 @@
 # Cloudflare Pages の設定
-name = "atama-no-sanpo"
+name = "atamanosanpo"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-10"
