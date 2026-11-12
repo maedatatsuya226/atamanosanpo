@@ -1,0 +1,746 @@
+/* ===== デザイントークン ===== */
+:root {
+  color-scheme: light;
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --surface-2: #eeebe3;
+  --ink: #1d2320;
+  --ink-2: #4a524d;
+  --line: #d6d1c4;
+  --primary: #2f6f5e;
+  --primary-ink: #ffffff;
+  --primary-soft: #dcebe5;
+  --ok: #1f7a4d;
+  --ok-soft: #dff3e7;
+  --ng: #b23a3a;
+  --ng-soft: #f8e3e1;
+  --focus: #e0a100;
+
+  /* 領域ごとの色(文字ラベルと必ず併用する) */
+  --d-spatial: #2b6cb0;
+  --d-orientation: #a86512;
+  --d-memory: #7048b8;
+  --d-planning: #2f7d4f;
+  --d-attention: #b83737;
+
+  --shape-fill: #2c4a6e;
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --gap: 16px;
+  --fs-base: 20px;
+  --tap: 64px;
+
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo',
+    system-ui, sans-serif;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+:root[data-fs='large'] {
+  --fs-base: 24px;
+  --tap: 72px;
+}
+:root[data-fs='xlarge'] {
+  --fs-base: 28px;
+  --tap: 84px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * 横向きで高さの低いiPad(1024×768など)では、課題中だけ文字の拡大を少し抑えて盤面がはみ出さないようにする。
+ * メニュー・やりかた・結果の画面は設定どおりの大きさのまま。
+ */
+@media (orientation: landscape) and (max-height: 800px) {
+  :root[data-fs='large']:has(.screen.play .play-area) {
+    --fs-base: 22px;
+    --tap: 68px;
+  }
+  :root[data-fs='xlarge']:has(.screen.play .play-area) {
+    --fs-base: 23px;
+    --tap: 70px;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  /* ダブルタップ拡大やスクロールの跳ね返りで課題が邪魔されないように */
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 4px solid var(--focus);
+  outline-offset: 2px;
+}
+
+rt {
+  font-size: 0.5em;
+  color: var(--ink-2);
+}
+
+/* ===== 画面共通 ===== */
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: max(env(safe-area-inset-top), 12px) max(env(safe-area-inset-right), 24px)
+    max(env(safe-area-inset-bottom), 16px) max(env(safe-area-inset-left), 24px);
+  gap: var(--gap);
+}
+
+.topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--gap);
+  min-height: var(--tap);
+}
+.home .topbar {
+  grid-template-columns: 1fr auto;
+}
+.play .topbar,
+.result .topbar {
+  grid-template-columns: 1fr auto;
+}
+.topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.topbar-title h1 {
+  font-size: 1.3rem;
+}
+.topbar-compact {
+  min-height: 56px;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+}
+.app-subtitle {
+  margin-left: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+
+/* ===== ボタン ===== */
+.btn {
+  min-height: var(--tap);
+  padding: 0 24px;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.06s ease, background-color 0.15s ease;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+.btn-secondary {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border-color: var(--line);
+}
+.btn-lg {
+  min-height: calc(var(--tap) + 8px);
+  font-size: 1.1rem;
+  padding: 0 32px;
+}
+.btn-xl {
+  min-height: calc(var(--tap) + 24px);
+  font-size: 1.4rem;
+  padding: 0 56px;
+}
+
+/* ===== バッジ ===== */
+.domain-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge-level,
+.badge-practice,
+.badge-soon {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.badge-level {
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.badge-practice {
+  background: #fff1c7;
+  color: #7a5600;
+}
+.badge-soon {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  align-self: flex-start;
+}
+
+/* ===== ホーム(領域ごとに1列、全課題をひと目で) ===== */
+.home {
+  gap: 12px;
+}
+.home .topbar {
+  min-height: 56px;
+}
+.home-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.domain-heading {
+  font-size: 1.05rem;
+  color: #fff;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.game-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 6px 6px 8px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.06s ease;
+}
+.game-card:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.game-card:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.game-card-thumb {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.game-thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  font-family: inherit;
+}
+/* 4段(注意の4課題)が1画面に収まるよう、絵の高さを画面の高さに合わせて抑える */
+.home .game-thumb {
+  max-height: calc((100dvh - 260px) / 4 - 40px);
+}
+.game-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.privacy-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+
+/* ===== 準備画面 ===== */
+.setup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+}
+.setup-summary {
+  font-size: 1.1rem;
+}
+.setup-intro {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.setup-thumb {
+  flex: none;
+  width: min(260px, 36%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+}
+.setup-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.setup-description {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.section-label {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
+}
+.segment {
+  min-height: var(--tap);
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+}
+.segment.is-selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+}
+.segmented-sm .segment {
+  font-size: 1rem;
+  min-width: 96px;
+}
+.level-desc {
+  margin-top: 12px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+.setup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap);
+  flex-wrap: wrap;
+}
+
+/* ===== 実施画面 ===== */
+.intro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  text-align: center;
+}
+.intro-heading {
+  font-size: 1.4rem;
+  color: var(--ink-2);
+}
+.intro-text {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.8;
+}
+.intro-actions {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+/* 課題中は画面の高さちょうどに固定し、スクロールさせない */
+.screen.play {
+  flex: none;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+.play-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.play-area.is-hidden {
+  visibility: hidden;
+}
+.loading {
+  margin: auto;
+  color: var(--ink-2);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(29, 35, 32, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 10;
+}
+.dialog {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 32px;
+  width: min(480px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+.dialog h2 {
+  font-size: 1.4rem;
+}
+.dialog-note {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== 縦向きのときの案内 ===== */
+.rotate-hint {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(246, 244, 239, 0.97);
+}
+.rotate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+  max-width: 560px;
+}
+.rotate-icon {
+  width: 220px;
+  height: auto;
+}
+.rotate-card h2 {
+  font-size: 1.6rem;
+}
+.rotate-note {
+  color: var(--ink-2);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+/* ===== 結果画面 ===== */
+.result-body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--gap);
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  text-align: center;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.detail-table th,
+.detail-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.detail-table tr:last-child th,
+.detail-table tr:last-child td {
+  border-bottom: none;
+}
+.detail-table th {
+  width: 8em;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.detail-mark {
+  width: 3em;
+  text-align: center !important;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.mark-correct {
+  color: var(--ok);
+}
+.mark-partial {
+  color: #a86512;
+}
+.mark-wrong {
+  color: var(--ng);
+}
+.result-note {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  text-align: center;
+}
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap);
+  flex-wrap: wrap;
+}
+
+/* ===== 設定画面 ===== */
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+}
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+}
+.setting-label {
+  font-weight: 700;
+}
+.about {
+  margin-top: 12px;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.about h2 {
+  font-size: 1rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.about ul {
+  margin: 0;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.version {
+  margin-top: 12px;
+}
+
+/* ===== 課題共通 ===== */
+.feedback {
+  min-height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 0 20px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.feedback-correct {
+  color: var(--ok);
+  background: var(--ok-soft);
+}
+.feedback-wrong {
+  color: var(--ng);
+  background: var(--ng-soft);
+}
+.feedback-info {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+.progress-text {
+  color: var(--ink-2);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+.task-instruction {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+/* ===== 数字パッド ===== */
+.numpad {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(360px, 100%);
+}
+.numpad-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  min-height: 80px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 3px solid var(--ink-2);
+  border-radius: var(--radius-sm);
+}
+.numpad-value {
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 2ch;
+  text-align: center;
+}
+.numpad-unit {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.numpad-keys {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.key {
+  min-height: var(--tap);
+  font-size: 1.6rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+}
+.key:active:not(:disabled) {
+  background: var(--surface-2);
+}
+.key:disabled {
+  opacity: 0.4;
+}
+.key-sub {
+  font-size: 1.1rem;
+}
+.key-ok {
+  font-size: 1.1rem;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+}
+
+/* ===== 縦向き・小さめの画面 ===== */
+@media (max-width: 700px) {
+  .screen {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .intro-text {
+    font-size: 1.3rem;
+  }
+  .btn-xl {
+    padding: 0 32px;
+  }
+}

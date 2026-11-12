@@ -1,0 +1,122 @@
+.fm {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fm-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.fm-note {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.fm-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  gap: 32px;
+  align-items: center;
+}
+.fm-sample {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--surface);
+  border: 4px solid var(--ink-2);
+  border-radius: var(--radius);
+}
+.fm-sample figcaption {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.fm-sample .shape-view {
+  width: min(100%, 38vh);
+}
+.fm-options {
+  display: grid;
+  gap: 16px;
+  justify-content: center;
+}
+.fm-options-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.fm-options-4 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.fm-options-6 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.fm-option {
+  display: grid;
+  place-items: center;
+  padding: 10px;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.06s ease;
+}
+.fm-option:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.fm-option .shape-view {
+  width: 100%;
+  max-width: 24vh;
+}
+.fm-options-3 .fm-option .shape-view {
+  max-width: 30vh;
+}
+.fm-option.is-wrong {
+  background: var(--ng-soft);
+  border-color: var(--ng);
+  opacity: 0.55;
+}
+.fm-option.is-answer {
+  background: var(--ok-soft);
+  border-color: var(--ok);
+  border-width: 5px;
+}
+.fm-option:disabled {
+  cursor: default;
+}
+
+/* 縦向き: 見本を上、選択肢を下に */
+@media (max-width: 900px) {
+  .fm-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: center;
+    align-items: start;
+    gap: 16px;
+  }
+  .fm-sample {
+    padding: 8px 32px;
+  }
+  .fm-sample .shape-view {
+    width: 20vh;
+  }
+  .fm-option .shape-view,
+  .fm-options-3 .fm-option .shape-view {
+    max-width: 16vh;
+  }
+  /* 文字が大きい設定では見出しが高くなるので、図を少し小さくする */
+  :root[data-fs='large'] .fm-sample .shape-view,
+  :root[data-fs='xlarge'] .fm-sample .shape-view {
+    width: 16vh;
+  }
+  :root[data-fs='large'] .fm-option .shape-view,
+  :root[data-fs='xlarge'] .fm-option .shape-view {
+    max-width: 13vh;
+  }
+}

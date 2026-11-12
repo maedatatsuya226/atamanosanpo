@@ -1,0 +1,111 @@
+.sg {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 24px;
+}
+.sg-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  min-height: 0;
+}
+.sg-instruction {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.sg-count {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+}
+.sg-count strong {
+  font-size: 2.2rem;
+  margin: 0 4px;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.sg-side .feedback {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+}
+.sg-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.sg-board {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 6px var(--surface-2);
+}
+.sg-block {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  /* 消えたあと、上のブロックが落ちる・列が左に詰まる動き */
+  transition: transform 0.22s ease-out;
+}
+.sg-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 3%;
+}
+.sg-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sg-block:active .sg-face {
+  transform: scale(0.94);
+}
+.sg-face.is-wrong {
+  animation: shake 0.3s ease;
+  filter: brightness(0.85);
+}
+
+/* 縦向き: 説明を上、盤面を下に */
+@media (max-width: 900px) {
+  .sg {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 16px;
+  }
+  .sg-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px 16px;
+  }
+  .sg-instruction br {
+    display: none;
+  }
+  .sg-side .feedback {
+    flex: 1 1 100%;
+    min-height: 2.4em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-block {
+    transition: none;
+  }
+}

@@ -1,0 +1,148 @@
+.sp {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sp-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(9em, auto) auto;
+  align-items: center;
+  gap: 16px;
+}
+.sp-sample {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 16px 2px 12px;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  border-radius: var(--radius);
+}
+.sp-sample-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.sp-sample-emoji,
+.sp-emoji {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+.sp-sample-emoji {
+  display: inline-block;
+  min-width: 1.15em;
+  font-size: 52px;
+  line-height: 1.2;
+  text-align: center;
+}
+.sp-instruction {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  text-align: left;
+}
+.sp-feedback .feedback {
+  font-size: 1.1rem;
+  min-height: 2.4em;
+  padding: 0 12px;
+}
+.sp-end {
+  padding: 0 28px;
+}
+.sp-stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.sp-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.sp-bg {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 2;
+}
+.sp-item {
+  cursor: pointer;
+}
+.sp-hit {
+  fill: transparent;
+}
+.sp-emoji {
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.sp-back {
+  pointer-events: none;
+}
+.sp-item.is-found .sp-back {
+  fill: var(--ok-soft);
+}
+.sp-item.is-wrong .sp-back {
+  fill: var(--ng-soft);
+}
+.sp-ring {
+  fill: none;
+  stroke: var(--ok);
+  pointer-events: none;
+}
+.sp-missed {
+  fill: none;
+  stroke: var(--focus);
+  stroke-dasharray: 10 7;
+  pointer-events: none;
+}
+.sp-item.is-wrong {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: shake 0.3s ease;
+}
+
+.sp-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  background: rgba(246, 244, 239, 0.55);
+  border-radius: 18px;
+}
+.sp-confirm-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(29, 35, 32, 0.18);
+}
+.sp-confirm-text {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.sp-confirm-actions {
+  display: flex;
+  gap: 16px;
+}
+
+/* 縦向き(820×1180 など) */
+@media (max-width: 900px) {
+  .sp-head {
+    gap: 10px;
+  }
+  .sp-instruction {
+    font-size: 1.15rem;
+  }
+  .sp-end {
+    padding: 0 20px;
+  }
+}

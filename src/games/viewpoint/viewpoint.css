@@ -1,0 +1,145 @@
+.vp {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vp-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.vp-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 24px;
+}
+
+/* ---- 見えた絵 ---- */
+.vp-view {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  background: #eef4fb;
+  border: 4px solid var(--ink-2);
+  border-radius: var(--radius);
+}
+.vp-view figcaption {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+.vp-elev {
+  display: block;
+  flex: 1;
+  width: 100%;
+  height: 0;
+  min-height: 0;
+}
+
+/* ---- 見取り図と立ち位置 ---- */
+.vp-map {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.vp-map-grid {
+  display: grid;
+}
+.vp-at-back {
+  grid-area: 1 / 2;
+}
+.vp-at-left {
+  grid-area: 2 / 1;
+}
+.vp-at-right {
+  grid-area: 2 / 3;
+}
+.vp-at-front {
+  grid-area: 3 / 2;
+}
+.vp-table-wrap {
+  grid-area: 2 / 2;
+  display: grid;
+  place-items: center;
+}
+.vp-table {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.vp-seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.2;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.06s ease;
+}
+.vp-seat:active:not(:disabled) {
+  transform: scale(0.97);
+}
+/* 矢印は机のほうに置く(まえ は上向きの矢印をラベルの上に) */
+.vp-seat.vp-at-front {
+  flex-direction: column-reverse;
+}
+.vp-seat-arrow {
+  color: var(--primary);
+  font-size: 1rem;
+  line-height: 1;
+}
+.vp-seat.is-wrong {
+  background: var(--ng-soft);
+  border-color: var(--ng);
+  opacity: 0.6;
+  animation: shake 0.3s ease;
+}
+.vp-seat.is-wrong .vp-seat-arrow {
+  color: var(--ng);
+  font-size: 1.3rem;
+}
+.vp-seat.is-answer {
+  background: var(--ok-soft);
+  border-color: var(--ok);
+  border-width: 5px;
+}
+.vp-seat:disabled {
+  cursor: default;
+}
+
+/* 縦向き: 絵を上、見取り図を下に */
+@media (max-width: 900px) {
+  .vp-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 0.75fr) minmax(0, 1.25fr);
+    gap: 16px;
+    justify-items: center;
+  }
+  .vp-view {
+    max-width: 640px;
+  }
+  .vp-map {
+    width: 100%;
+    height: 100%;
+  }
+}

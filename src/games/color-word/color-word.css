@@ -1,0 +1,90 @@
+.cw {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.cw-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.cw-note {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+/* 文字を出す暗いカード(背景色は logic.ts の CARD_BG) */
+.cw-card {
+  flex: 1;
+  min-height: 0;
+  width: min(900px, 100%);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  overflow: hidden;
+  container-type: size;
+}
+.cw-word {
+  font-size: min(9rem, 26cqw, 60cqh);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  /* 「きいろ」なども背景から浮き出るように */
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+.cw-mark {
+  font-size: min(8rem, 50cqh);
+  font-weight: 800;
+  line-height: 1;
+}
+.cw-mark.is-ok {
+  color: #7ee2a8;
+}
+.cw-mark.is-ng {
+  color: #ffa3a3;
+}
+.cw-mark.is-timeout {
+  color: #c9cfd2;
+}
+
+/* 答えのボタン: 色はつけず、文字だけで区別する */
+.cw-answers {
+  flex: none;
+  width: min(900px, 100%);
+  display: grid;
+  gap: 16px;
+}
+.cw-answers-match {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cw-answers-ink {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.cw-answer {
+  height: clamp(96px, 16vh, 150px);
+  padding: 0 8px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 3px solid var(--ink-2);
+  border-radius: var(--radius);
+  font-size: 2rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.08);
+  transition: transform 0.06s ease;
+  touch-action: manipulation;
+}
+.cw-answers-ink .cw-answer {
+  font-size: 1.7rem;
+}
+.cw-answer:active {
+  transform: scale(0.97);
+  background: var(--surface-2);
+}

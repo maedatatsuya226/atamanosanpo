@@ -1,0 +1,3 @@
+# 改行はLFにそろえる(Windowsで編集しても、Cloudflareでのビルドと同じ形にする)
+* text=auto eol=lf
+*.png binary

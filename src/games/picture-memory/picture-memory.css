@@ -1,0 +1,169 @@
+.pm {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.pm-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.pm-head .task-instruction,
+.pm-head .feedback {
+  min-height: 2.6rem;
+}
+
+/* 残りの領域にカードを並べる(大きさは画面に合わせて計算) */
+.pm-stage {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.pm-grid {
+  display: grid;
+  justify-content: center;
+}
+
+.pm-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2%;
+  padding: 6px 4px;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  line-height: 1.15;
+  transition: transform 0.06s ease, background-color 0.12s ease;
+}
+button.pm-card {
+  cursor: pointer;
+}
+button.pm-card:active {
+  transform: scale(0.97);
+}
+.pm-emoji {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  line-height: 1.1;
+}
+.pm-name {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* 回答: えらんだカード */
+.pm-card.is-selected {
+  background: var(--primary-soft);
+  border: 6px solid var(--primary);
+}
+
+/* 答え合わせ */
+.pm-card.is-hit {
+  background: var(--ok-soft);
+  border: 6px solid var(--ok);
+}
+.pm-card.is-miss {
+  border: 6px dashed var(--ok);
+}
+.pm-card.is-false {
+  background: var(--ng-soft);
+  border: 6px solid var(--ng);
+}
+.pm-card.is-faded {
+  opacity: 0.4;
+}
+
+.pm-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.pm-badge-sel {
+  background: var(--primary);
+}
+.pm-badge-ok {
+  background: var(--ok);
+}
+.pm-card.is-miss .pm-badge-ok {
+  background: var(--surface);
+  color: var(--ok);
+  border: 3px solid var(--ok);
+}
+.pm-badge-ng {
+  background: var(--ng);
+}
+
+/* 待ち時間 */
+.pm-wait {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  width: min(260px, 60vmin);
+  aspect-ratio: 1;
+  align-content: center;
+  flex-wrap: wrap;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 4px solid var(--line);
+  color: var(--ink-2);
+}
+.pm-wait-num {
+  font-size: 4.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.pm-wait-unit {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.pm-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  min-height: calc(var(--tap) + 8px);
+}
+.pm-legend {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pm-legend-ok,
+.pm-legend-ng {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.pm-legend-ok {
+  color: var(--ok);
+}
+.pm-legend-ng {
+  color: var(--ng);
+  margin-left: 12px;
+}

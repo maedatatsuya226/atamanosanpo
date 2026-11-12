@@ -1,0 +1,83 @@
+.no {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.no-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.no-instruction {
+  font-size: 1.3rem;
+}
+.no-head .feedback {
+  min-width: 10em;
+}
+.no-stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.no-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  /* 見えない当たり判定の輪が枠の外にはみ出さないように */
+  overflow: hidden;
+}
+.no-bg {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 2;
+}
+.no-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+}
+.no-target {
+  cursor: pointer;
+}
+.no-hit {
+  fill: transparent;
+}
+.no-circle {
+  fill: #fff;
+  stroke: var(--ink);
+  stroke-width: 3;
+  transition: fill 0.1s ease;
+}
+.no-label {
+  fill: var(--ink);
+  font-weight: 800;
+  pointer-events: none;
+  user-select: none;
+  font-family: inherit;
+}
+.no-tag {
+  fill: var(--ink-2);
+  font-weight: 700;
+  pointer-events: none;
+}
+.no-target.is-done .no-circle {
+  fill: var(--primary);
+  stroke: var(--primary);
+}
+.no-target.is-done .no-label {
+  fill: #fff;
+}
+.no-target.is-wrong .no-circle {
+  fill: var(--ng-soft);
+  stroke: var(--ng);
+  stroke-width: 6;
+}

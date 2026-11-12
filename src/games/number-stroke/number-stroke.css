@@ -1,0 +1,182 @@
+.ns {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+}
+.ns-side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.ns-instruction {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.ns-inst-line {
+  display: block;
+}
+.ns-next {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+}
+.ns-next strong {
+  font-size: 2rem;
+  margin: 0 4px;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.ns-side .feedback {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+}
+.ns-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ns-buttons .btn {
+  padding: 0 16px;
+}
+/* 横向きで高さの低い画面では、左の説明欄を詰める */
+@media (min-width: 901px) and (max-height: 800px) {
+  .ns-side {
+    gap: 10px;
+  }
+  .ns-instruction {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .ns-buttons .btn {
+    min-height: var(--tap);
+  }
+}
+.ns-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.ns-board {
+  display: block;
+  /* 指でなぞる間に画面がスクロール・拡大しないように */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+.ns-cell {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 3;
+  transition: fill 0.12s ease;
+}
+.ns-cell.is-visited {
+  fill: var(--primary-soft);
+  stroke: var(--primary);
+}
+.ns-cell.is-goal {
+  stroke: var(--d-planning);
+  stroke-width: 6;
+}
+.ns-cell.is-wrong {
+  fill: var(--ng-soft);
+  stroke: var(--ng);
+  stroke-width: 6;
+  transform-box: fill-box;
+  animation: shake 0.3s ease;
+}
+.ns-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 22;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.85;
+  pointer-events: none;
+}
+.ns-line.is-cleared {
+  stroke: var(--ok);
+}
+.ns-head {
+  fill: none;
+  stroke: var(--focus);
+  stroke-width: 7;
+  pointer-events: none;
+}
+.ns-dot {
+  fill: var(--primary);
+  pointer-events: none;
+}
+.ns-num {
+  pointer-events: none;
+}
+.ns-num circle {
+  fill: #fff;
+  stroke: var(--ink);
+  stroke-width: 4;
+}
+.ns-num text {
+  fill: var(--ink);
+  font-weight: 800;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.ns-num.is-visited circle {
+  fill: var(--primary);
+  stroke: var(--primary);
+}
+.ns-num.is-visited text {
+  fill: #fff;
+}
+.ns-tag {
+  fill: var(--ink-2);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* 縦向き(820×1180 など)では説明を上、盤面を下に置く */
+@media (max-width: 900px) {
+  .ns {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+  }
+  .ns-side {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px 16px;
+  }
+  .ns-side .progress-text {
+    grid-column: 1;
+  }
+  .ns-instruction {
+    grid-column: 2 / 4;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  .ns-inst-line {
+    display: inline;
+    margin-right: 0.8em;
+  }
+  .ns-next {
+    grid-column: 1 / 3;
+    justify-self: start;
+  }
+  .ns-buttons {
+    grid-column: 3;
+    flex-direction: row;
+  }
+  .ns-side .feedback {
+    grid-column: 1 / 4;
+  }
+}

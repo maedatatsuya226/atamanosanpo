@@ -1,0 +1,110 @@
+.sw {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.sw-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.sw-target {
+  font-size: 2.2rem;
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+  color: var(--primary);
+}
+
+.sw-body {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  container-type: size;
+}
+.sw-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  min-width: min(560px, 100%);
+  padding: 0 40px;
+  background: var(--surface);
+  border: 4px solid var(--ink-2);
+  border-radius: var(--radius);
+  line-height: 1.15;
+}
+.sw-digits {
+  /* 残りの高さ・幅に収まる大きさにする(文字サイズ設定が大きいときもはみ出さない) */
+  font-size: min(10rem, 20cqw, 46cqh);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.sw-unit {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.sw-display.is-hidden .sw-digits {
+  color: var(--ink-2);
+}
+.sw-display.is-result {
+  border-color: var(--primary);
+}
+.sw-sub {
+  min-height: 1.6em;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink-2);
+}
+.sw-diff {
+  color: var(--ink);
+}
+.sw-diff.is-ok {
+  color: var(--ok);
+}
+
+.sw-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* ボタンが入れ替わっても高さが変わらないように */
+  height: clamp(110px, 20vh, 180px);
+  flex: none;
+}
+.sw-btn {
+  width: min(640px, 100%);
+  height: 100%;
+  font-size: 2.4rem;
+  letter-spacing: 0.1em;
+  border-radius: 28px;
+  color: #fff;
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.18);
+  /* 押した瞬間に反応させる(長押しメニュー・選択を出さない) */
+  touch-action: manipulation;
+}
+.sw-btn-start {
+  background: var(--primary);
+}
+.sw-btn-stop {
+  background: #c0502a;
+}
+.sw-btn:active:not(:disabled) {
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+.sw-btn-next {
+  min-width: min(360px, 100%);
+}

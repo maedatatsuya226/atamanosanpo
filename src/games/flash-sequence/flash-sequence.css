@@ -1,0 +1,80 @@
+.fs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.fs-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.fs-dots {
+  display: flex;
+  gap: 10px;
+  min-height: 18px;
+}
+.fs-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--ink-2);
+  background: transparent;
+}
+.fs-dot.is-on {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* 残りの領域に収まる最大の正方形にする */
+.fs-stage {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+.fs-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3.5%;
+  padding: 8px;
+}
+.fs-tile {
+  position: relative;
+  border: none;
+  border-radius: 18%;
+  background: #8a9bab;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.15);
+  transition: background-color 0.08s ease, box-shadow 0.08s ease;
+  cursor: default;
+}
+.fs-board.is-input .fs-tile {
+  cursor: pointer;
+}
+.fs-tile:disabled {
+  opacity: 1;
+}
+.fs-tile.is-lit {
+  background: #ffd23f;
+  box-shadow:
+    0 0 0 6px rgba(255, 210, 63, 0.45),
+    0 0 36px rgba(255, 210, 63, 0.9);
+}
+.fs-tile.is-wrong {
+  background: var(--ng);
+}
+.fs-answer-no {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}

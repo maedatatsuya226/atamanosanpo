@@ -1,0 +1,16 @@
+# Cloudflare Pages の応答ヘッダー設定
+# - 検索エンジンに載せない
+# - 外部への通信・カメラ・マイク・位置情報を使えないようにする(患者情報ゼロ設計の担保)
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; object-src 'none'
+
+# 新しい版がすぐ届くよう、Service Worker と HTML はキャッシュさせない
+/sw.js
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache

@@ -1,0 +1,109 @@
+.np {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+}
+.np-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+.np-instruction {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.np-next {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+}
+.np-next strong {
+  font-size: 2.2rem;
+  margin: 0 4px;
+  color: var(--primary);
+}
+.np-side .feedback {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+}
+.np-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.np-board {
+  display: grid;
+  gap: 4px;
+}
+.np-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: inherit;
+  font-weight: 800;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 10%;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.np-num {
+  font-size: 1em;
+  line-height: 1;
+}
+.np-tag {
+  position: absolute;
+  bottom: 6%;
+  left: 0;
+  right: 0;
+  font-size: 0.32em;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.np-cell.is-goal {
+  border-color: var(--d-planning);
+  border-width: 4px;
+}
+.np-cell.is-visited {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.np-cell.is-current {
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: 0 0 0 4px rgba(47, 111, 94, 0.35);
+}
+.np-cell.is-current .np-tag,
+.np-cell.is-visited .np-tag {
+  color: inherit;
+}
+.np-cell.is-wrong {
+  background: var(--ng-soft);
+  border-color: var(--ng);
+  animation: shake 0.3s ease;
+}
+
+@media (max-width: 900px) {
+  .np {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .np-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .np-instruction br {
+    display: none;
+  }
+}
