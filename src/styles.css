@@ -158,6 +158,9 @@ rt {
   letter-spacing: 0.04em;
 }
 .app-subtitle {
+  /* 幅が足りないときは途中で切らず、副題ごと次の行に送る */
+  display: inline-block;
+  white-space: nowrap;
   margin-left: 14px;
   font-size: 0.85rem;
   font-weight: 600;
@@ -245,6 +248,29 @@ rt {
 }
 .home .topbar {
   min-height: 56px;
+  grid-template-columns: 1fr auto auto;
+}
+
+/* 新しい版が届いたときの「更新する」 */
+.update-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 4px 4px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-soft);
+  border: 2px solid var(--primary);
+}
+.update-notice-text {
+  font-weight: 700;
+  color: var(--primary);
+}
+.update-notice .btn {
+  min-height: 48px;
+}
+.about .update-notice {
+  margin-top: 12px;
+  width: fit-content;
 }
 .home-body {
   flex: 1;
@@ -298,9 +324,49 @@ rt {
   aspect-ratio: 16 / 10;
   font-family: inherit;
 }
-/* 4段(注意の4課題)が1画面に収まるよう、絵の高さを画面の高さに合わせて抑える */
-.home .game-thumb {
-  max-height: calc((100dvh - 260px) / 4 - 40px);
+/*
+ * ホームはスクロールさせず1画面に収める。
+ * 各列を、いちばん課題の多い列の課題数(--rows 段。HomeScreen が決める)で縦に等分し、
+ * カードの絵は課題名を除いた残りの高さに収まるよう縮む。課題が増えたり文字を大きくしても自動で合う。
+ * 高さがとても低い画面(スマートフォンの横向きなど)では、無理に詰めずにスクロールさせる。
+ */
+@media (min-height: 600px) {
+  .screen.home {
+    flex: none;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  .home-body {
+    min-height: 0;
+    align-items: stretch;
+  }
+  .domain-section {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .card-list {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: repeat(var(--rows, 4), minmax(0, 1fr));
+  }
+  .home .game-card {
+    min-height: 0;
+  }
+  .home .game-card-thumb {
+    flex: 1;
+    min-height: 0;
+  }
+  .home .game-thumb {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  /* 文字を大きくする設定でも、課題名が2行に折り返して絵がつぶれないよう「ふつう」の大きさで止める */
+  .home .game-card-title {
+    font-size: min(0.95rem, 19px);
+  }
 }
 .game-card-title {
   font-size: 0.95rem;

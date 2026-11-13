@@ -1,3 +1,4 @@
+import { UpdateNotice } from '../components/UpdateNotice'
 import { useSettings, type Settings } from '../core/settings'
 
 const FONT_OPTIONS: { value: Settings['fontScale']; label: string }[] = [
@@ -73,6 +74,7 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
             <li>見当識の課題は端末の時計を正解として使います。端末の日付が正しいことを確認してください。</li>
           </ul>
           <p className="version">バージョン {__APP_VERSION__}</p>
+          <UpdateNotice />
         </section>
       </main>
     </div>

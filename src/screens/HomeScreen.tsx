@@ -1,4 +1,6 @@
+import type { CSSProperties } from 'react'
 import { GameThumb } from '../components/GameThumb'
+import { UpdateNotice } from '../components/UpdateNotice'
 import { DOMAINS } from '../core/domains'
 import { gamesByDomain } from '../games/registry'
 
@@ -6,6 +8,9 @@ interface Props {
   onSelectGame: (id: string) => void
   onOpenSettings: () => void
 }
+
+/** いちばん課題の多い領域の課題数(縦に並ぶ段の数) */
+const MAX_ROWS = Math.max(...DOMAINS.map((d) => gamesByDomain(d.id).length))
 
 /** 5つの領域を列に並べ、全課題をひと目で見渡せるようにする */
 export function HomeScreen({ onSelectGame, onOpenSettings }: Props) {
@@ -15,12 +20,13 @@ export function HomeScreen({ onSelectGame, onOpenSettings }: Props) {
         <h1 className="app-title">
           あたまのさんぽ<span className="app-subtitle">OT認知トレーニング</span>
         </h1>
+        <UpdateNotice />
         <button type="button" className="btn btn-ghost" onClick={onOpenSettings}>
           設定
         </button>
       </header>
 
-      <main className="home-body">
+      <main className="home-body" style={{ '--rows': MAX_ROWS } as CSSProperties}>
         {DOMAINS.map((d) => (
           <section key={d.id} className="domain-section" aria-labelledby={`dom-${d.id}`}>
             <h2 id={`dom-${d.id}`} className="domain-heading" style={{ background: `var(${d.colorVar})` }}>
