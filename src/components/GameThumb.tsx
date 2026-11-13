@@ -85,7 +85,7 @@ function FigureMatch() {
   )
 }
 
-function Samegame() {
+function IroKeshi() {
   const grid = [
     [0, 0, 1, 2, 2, 3, 1, 1],
     [0, 1, 1, 2, 3, 3, 0, 1],
@@ -676,7 +676,7 @@ const THUMBS: Record<string, () => ReactNode> = {
   'road-rotate': RoadRotate,
   'drive-maze': DriveMaze,
   'figure-match': FigureMatch,
-  samegame: Samegame,
+  'iro-keshi': IroKeshi,
   viewpoint: Viewpoint,
   'orientation-date': OrientationDate,
   'flash-sequence': FlashSequence,

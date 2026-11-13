@@ -12,7 +12,7 @@ import { META as PAYMENT_META } from './payment/meta'
 import { META as PICTURE_MEMORY_META } from './picture-memory/meta'
 import { META as ROAD_ROTATE_META } from './road-rotate/meta'
 import { META as SAME_PICTURE_META } from './same-picture/meta'
-import { META as SAMEGAME_META } from './samegame/meta'
+import { META as IRO_KESHI_META } from './iro-keshi/meta'
 import { META as STEP_ORDER_META } from './step-order/meta'
 import { META as STOPWATCH_META } from './stopwatch/meta'
 import { META as STORY_MEMORY_META } from './story-memory/meta'
@@ -41,14 +41,14 @@ export const GAMES: readonly GameDef[] = [
     ...lazyGame(() => import('./figure-match/FigureMatchGame')),
   },
   {
-    id: 'samegame',
+    id: 'iro-keshi',
     domain: 'spatial',
-    title: 'さめがめ',
-    ...SAMEGAME_META,
+    title: 'いろけし',
+    ...IRO_KESHI_META,
     summary: '同じ色のつながりをタップして消していく',
-    description: SAMEGAME_META.summary,
+    description: IRO_KESHI_META.summary,
     supportsPractice: true,
-    ...lazyGame(() => import('./samegame/SamegameGame')),
+    ...lazyGame(() => import('./iro-keshi/IroKeshiGame')),
   },
   {
     id: 'viewpoint',

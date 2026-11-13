@@ -4,7 +4,7 @@ import { useElementSize, usePausableTimeout } from '../../core/hooks'
 import { useSound } from '../../core/sound'
 import type { GameProps } from '../../core/types'
 import { configFor, countBlocks, findGroup, generateBoard, hasMoves, removeCells } from './logic'
-import './samegame.css'
+import './iro-keshi.css'
 
 /** 消せる所がなくなってから結果画面へ進むまでの待ち時間 */
 const END_DELAY_MS = 1800
@@ -62,7 +62,7 @@ function BlockFace({ color }: { color: number }) {
 
 type EndReason = 'cleared' | 'nomoves' | 'quit'
 
-export default function SamegameGame({ difficulty, mode, paused, onFinish }: GameProps) {
+export default function IroKeshiGame({ difficulty, mode, paused, onFinish }: GameProps) {
   const sound = useSound()
   const [cfg] = useState(() => configFor(difficulty, mode))
   const [grid, setGrid] = useState(() => generateBoard(cfg))
