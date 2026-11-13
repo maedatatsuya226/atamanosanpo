@@ -107,3 +107,21 @@
     display: none;
   }
 }
+
+/* ヒントで光らせるマスと、こたえの道 */
+.np-cell.is-hint {
+  border-color: #e0a100;
+  border-width: 5px;
+  background: rgba(224, 161, 0, 0.18);
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}
+.np-cell.is-answer {
+  background: rgba(224, 161, 0, 0.28);
+  border-color: #e0a100;
+  /* スタートのマス(白い文字)も読めるように、文字は黒にそろえる */
+  color: var(--ink);
+  box-shadow: none;
+}
+.np-cell.is-answer .np-tag {
+  color: var(--ink-2);
+}

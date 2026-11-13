@@ -113,3 +113,21 @@
     display: none;
   }
 }
+
+/* ヒントで光らせるタイル・こたえの道 */
+.rr-tile.is-hint {
+  background: rgba(224, 161, 0, 0.22);
+  animation: rr-hint 0.9s ease-in-out infinite;
+}
+@keyframes rr-hint {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 5px #e0a100;
+  }
+  50% {
+    box-shadow: inset 0 0 0 5px rgba(224, 161, 0, 0.2);
+  }
+}
+.rr-tile.is-answer {
+  background: rgba(224, 161, 0, 0.22);
+}

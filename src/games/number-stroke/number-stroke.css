@@ -180,3 +180,20 @@
     grid-column: 1 / 4;
   }
 }
+
+/* ヒントで光らせるマスと、こたえの線 */
+.ns-hint {
+  fill: rgba(224, 161, 0, 0.18);
+  stroke: #e0a100;
+  stroke-width: 8;
+  pointer-events: none;
+}
+.ns-answer {
+  fill: none;
+  stroke: #e0a100;
+  stroke-width: 18;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 2 26;
+  pointer-events: none;
+}

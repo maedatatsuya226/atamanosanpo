@@ -1,10 +1,22 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { AssistBar } from '../../components/AssistBar'
 import { Feedback, Progress, type FeedbackKind } from '../../components/Feedback'
 import { useElementSize, usePausableTimeout, useTrialClock } from '../../core/hooks'
 import { useSound } from '../../core/sound'
 import { formatDuration } from '../../core/stopwatch'
 import type { DetailRow, GameProps } from '../../core/types'
-import { BOARDS, buildBoard, cellOfNumber, checkStep, isComplete, isStuck, nextNumber, type StepResult } from './logic'
+import {
+  BOARDS,
+  buildBoard,
+  cellOfNumber,
+  checkStep,
+  isComplete,
+  isStuck,
+  nextNumber,
+  strokeHint,
+  type StepResult,
+  type StrokeHint,
+} from './logic'
 import './number-stroke.css'
 
 const CLEAR_MS = 1300
@@ -25,6 +37,10 @@ interface BoardRecord {
   /** 「さいしょから」の回数 */
   restarts: number
   ms: number
+  /** ヒントを使った回数 */
+  hints: number
+  /** こたえを見た */
+  answered: boolean
 }
 
 interface Message {
@@ -56,7 +72,13 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
   const setTrail = (t: number[]) => {
     trailRef.current = t
     setTrailState(t)
+    // 道が変わったら、ヒントの光は消す
+    setHint(null)
   }
+  const [hints, setHints] = useState(0)
+  const [hint, setHint] = useState<StrokeHint | null>(null)
+  /** こたえを表示して「つぎへ」を待っている */
+  const [answered, setAnswered] = useState(false)
   const [errors, setErrors] = useState(0)
   const [stepsBack, setStepsBack] = useState(0)
   const [restarts, setRestarts] = useState(0)
@@ -81,44 +103,49 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
   const nextNum = nextNumber(board, trail)
 
   const finish = (all: BoardRecord[]) => {
-    const details: DetailRow[] = all.map((r, i) => ({
-      label: `${i + 1}面`,
-      value: `ミス${r.errors}回・もどる${r.stepsBack}回・さいしょから${r.restarts}回・${formatDuration(r.ms)}`,
-      mark: r.errors === 0 && r.stepsBack + r.restarts === 0 ? 'correct' : 'partial',
-    }))
+    const details: DetailRow[] = all.map((r, i) => {
+      const parts = [`ミス${r.errors}回`, `もどる${r.stepsBack}回`, `さいしょから${r.restarts}回`]
+      if (r.hints > 0) parts.push(`ヒント${r.hints}回`)
+      if (r.answered) parts.push('こたえを見た')
+      parts.push(formatDuration(r.ms))
+      const clean = r.errors === 0 && r.stepsBack + r.restarts === 0 && r.hints === 0 && !r.answered
+      return { label: `${i + 1}面`, value: parts.join('・'), mark: clean ? 'correct' : 'partial' }
+    })
     onFinish({
-      correct: all.filter((r) => r.errors === 0 && r.stepsBack + r.restarts === 0).length,
+      correct: details.filter((d) => d.mark === 'correct').length,
       total: all.length,
       errors: all.reduce((n, r) => n + r.errors, 0),
       extra: [
         { label: 'もどった回数', value: `${all.reduce((n, r) => n + r.stepsBack + r.restarts, 0)}回` },
         { label: 'うち「さいしょから」', value: `${all.reduce((n, r) => n + r.restarts, 0)}回` },
+        { label: 'ヒントを使った回数', value: `${all.reduce((n, r) => n + r.hints, 0)}回` },
+        { label: 'こたえを見た面', value: `${all.filter((r) => r.answered).length}面` },
       ],
       details,
     })
   }
 
-  usePausableTimeout(
-    () => {
-      const all = [...records, { errors, stepsBack, restarts, ms: clearMs }]
-      if (index + 1 >= total) {
-        finish(all)
-        return
-      }
-      setRecords(all)
-      setIndex(index + 1)
-      setTrail([cellOfNumber(boards[index + 1], 1)])
-      setErrors(0)
-      setStepsBack(0)
-      setRestarts(0)
-      setMessage(null)
-      setCleared(false)
-      clock.restart()
-    },
-    cleared ? CLEAR_MS : null,
-    paused,
-    index,
-  )
+  /** この面の記録を残して、次の面へ(最後なら結果へ) */
+  const goNext = (wasAnswered: boolean) => {
+    const all = [...records, { errors, stepsBack, restarts, ms: clearMs, hints, answered: wasAnswered }]
+    if (index + 1 >= total) {
+      finish(all)
+      return
+    }
+    setRecords(all)
+    setIndex(index + 1)
+    setTrail([cellOfNumber(boards[index + 1], 1)])
+    setErrors(0)
+    setStepsBack(0)
+    setRestarts(0)
+    setHints(0)
+    setAnswered(false)
+    setMessage(null)
+    setCleared(false)
+    clock.restart()
+  }
+
+  usePausableTimeout(() => goNext(false), cleared ? CLEAR_MS : null, paused, index)
 
   usePausableTimeout(() => setWrongCell(null), wrongCell ? WRONG_FLASH_MS : null, false, wrongCell?.n)
   usePausableTimeout(() => setMessage(null), message ? MESSAGE_MS : null, paused, message?.n)
@@ -144,7 +171,7 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
 
   const stepBack = () => {
     const t = trailRef.current
-    if (cleared || t.length <= 1) return
+    if (cleared || answered || t.length <= 1) return
     sound('tap')
     setTrail(t.slice(0, -1))
     setStepsBack((n) => n + 1)
@@ -152,11 +179,29 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
   }
 
   const restart = () => {
-    if (cleared || trailRef.current.length <= 1) return
+    if (cleared || answered || trailRef.current.length <= 1) return
     sound('tap')
     setTrail([startCell])
     setRestarts((n) => n + 1)
     setMessage(null)
+  }
+
+  const showHint = () => {
+    if (cleared || answered) return
+    sound('tap')
+    setHints((n) => n + 1)
+    const h = strokeHint(board, trailRef.current)
+    setHint(h)
+    say('info', h.kind === 'next' ? 'ひかって いる マスへ すすみましょう' : 'ひかって いる マスまで もどって みましょう')
+  }
+
+  const showAnswer = () => {
+    if (cleared || answered) return
+    dragRef.current = null
+    setHint(null)
+    setMessage(null)
+    setClearMs(clock.read())
+    setAnswered(true)
   }
 
   /** ルール違反(数字の順番ちがい・ほかのマスが残っているのにゴール)。やさしく断ってミスに数える */
@@ -216,7 +261,7 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
   }
 
   const onPointerDown = (e: ReactPointerEvent<SVGSVGElement>) => {
-    if (cleared || paused) return
+    if (cleared || answered || paused) return
     // なぞっている指とは別の指(手のひらなど)は無視する。前のなぞりが残っていたら新しい指で始め直す
     if (dragRef.current && !e.isPrimary) return
     dragRef.current = null
@@ -271,10 +316,12 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
   const goalCell = cellOfNumber(board, last)
   const endP = center(current)
 
-  const feedbackKind: FeedbackKind = cleared ? 'correct' : message ? message.kind : stuck ? 'info' : null
+  const feedbackKind: FeedbackKind = cleared ? 'correct' : answered ? 'info' : message ? message.kind : stuck ? 'info' : null
   const feedbackText = cleared
     ? 'せいかい！'
-    : message
+    : answered
+      ? 'これが こたえの ひとつです'
+      : message
       ? message.text
       : stuck
         ? 'この さきへ すすめません。もどって ください'
@@ -294,14 +341,23 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
           つぎの すうじ <strong>{cleared || nextNum > last ? '—' : nextNum}</strong>
         </div>
         <Feedback kind={feedbackKind}>{feedbackText}</Feedback>
-        <div className="ns-buttons">
-          <button type="button" className="btn btn-secondary btn-lg" onClick={stepBack} disabled={cleared || trail.length <= 1}>
-            ひとつ もどる
-          </button>
-          <button type="button" className="btn btn-ghost btn-lg" onClick={restart} disabled={cleared || trail.length <= 1}>
-            さいしょから
-          </button>
-        </div>
+        {!answered && (
+          <div className="ns-buttons">
+            <button type="button" className="btn btn-secondary btn-lg" onClick={stepBack} disabled={cleared || trail.length <= 1}>
+              ひとつ もどる
+            </button>
+            <button type="button" className="btn btn-ghost btn-lg" onClick={restart} disabled={cleared || trail.length <= 1}>
+              さいしょから
+            </button>
+          </div>
+        )}
+        <AssistBar
+          answered={answered}
+          disabled={cleared}
+          onHint={showHint}
+          onAnswer={showAnswer}
+          onNext={() => goNext(true)}
+        />
       </aside>
 
       <div className="ns-stage" ref={stageRef}>
@@ -340,7 +396,23 @@ export default function NumberStrokeGame({ difficulty, mode, paused, onFinish }:
             )
           })}
           {trail.length > 1 && <polyline points={linePoints} className={`ns-line ${cleared ? 'is-cleared' : ''}`} />}
-          {!cleared && <circle cx={endP.x} cy={endP.y} r={40} className="ns-head" />}
+          {answered && (
+            <polyline
+              points={board.solution.map((c) => `${center(c).x},${center(c).y}`).join(' ')}
+              className="ns-answer"
+            />
+          )}
+          {hint && !answered && (
+            <rect
+              className="ns-hint hint-glow"
+              x={center(hint.cell).x - UNIT / 2 + 5}
+              y={center(hint.cell).y - UNIT / 2 + 5}
+              width={UNIT - 10}
+              height={UNIT - 10}
+              rx={12}
+            />
+          )}
+          {!cleared && !answered && <circle cx={endP.x} cy={endP.y} r={40} className="ns-head" />}
           {trail.length === 1 && <circle cx={endP.x} cy={endP.y} r={13} className="ns-dot" />}
           {numbers.map((n, cell) => {
             if (n === 0) return null

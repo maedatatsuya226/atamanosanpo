@@ -7,12 +7,15 @@ export interface Settings {
   fontScale: 'normal' | 'large' | 'xlarge'
   sound: boolean
   furigana: boolean
+  /** 課題に「ヒント」「こたえを見る」ボタンを出す */
+  assist: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   fontScale: 'normal',
   sound: true,
   furigana: true,
+  assist: true,
 }
 
 const STORAGE_KEY = 'ot-cog-settings-v1'
@@ -28,6 +31,7 @@ function loadSettings(): Settings {
         : DEFAULT_SETTINGS.fontScale,
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : DEFAULT_SETTINGS.sound,
       furigana: typeof parsed.furigana === 'boolean' ? parsed.furigana : DEFAULT_SETTINGS.furigana,
+      assist: typeof parsed.assist === 'boolean' ? parsed.assist : DEFAULT_SETTINGS.assist,
     }
   } catch {
     return DEFAULT_SETTINGS

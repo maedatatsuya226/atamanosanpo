@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { AssistBar } from '../../components/AssistBar'
 import { CAR_ANGLE, CarIcon } from '../../components/CarIcon'
 import { Feedback, Progress, type FeedbackKind } from '../../components/Feedback'
 import { useElementSize, usePausableTimeout, useTrialClock } from '../../core/hooks'
@@ -10,6 +11,7 @@ import {
   buildCourse,
   carPose,
   chooseAtJunction,
+  correctNext,
   COURSES,
   DIRS,
   dirOf,
@@ -42,10 +44,12 @@ interface CourseRecord {
   wrong: number
   stops: number
   deadEnds: number
+  /** ヒントを使った回数 */
+  hints: number
   ms: number
 }
 
-const EMPTY_STATS = { wrong: 0, stops: 0, deadEnds: 0 }
+const EMPTY_STATS = { wrong: 0, stops: 0, deadEnds: 0, hints: 0 }
 
 function center(node: number, cols: number): [number, number] {
   return [(node % cols) + 0.5, Math.floor(node / cols) + 0.5]
@@ -61,6 +65,8 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
   const [records, setRecords] = useState<CourseRecord[]>([])
   const [notice, setNotice] = useState<{ text: string; kind: FeedbackKind; n: number } | null>(null)
   const [, setFrame] = useState(0)
+  /** ヒントで光らせている矢印(どの曲がり角の、どの向きか) */
+  const [hintFor, setHintFor] = useState<{ node: number; dir: Dir } | null>(null)
   const clock = useTrialClock(paused)
   const [stageRef, stage] = useElementSize<HTMLDivElement>()
 
@@ -128,18 +134,24 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
       const all = [...records, { ...s, ms: clearMsRef.current }]
       if (index + 1 >= total) {
         onFinish({
-          correct: all.filter((r) => r.wrong === 0).length,
+          correct: all.filter((r) => r.wrong === 0 && r.hints === 0).length,
           total: all.length,
           errors: all.reduce((n, r) => n + r.wrong, 0),
           extra: [
             { label: '止まって待った回数(間に合わなかった)', value: `${all.reduce((n, r) => n + r.stops, 0)}回` },
             { label: '行き止まりでUターンした回数', value: `${all.reduce((n, r) => n + r.deadEnds, 0)}回` },
+            { label: 'ヒントを使った回数', value: `${all.reduce((n, r) => n + r.hints, 0)}回` },
           ],
           details: all.map(
             (r, i): DetailRow => ({
               label: `${i + 1}コース`,
-              value: `まちがい${r.wrong}回・止まった${r.stops}回・${formatDuration(r.ms)}`,
-              mark: r.wrong === 0 ? 'correct' : 'partial',
+              value: [
+                `まちがい${r.wrong}回`,
+                `止まった${r.stops}回`,
+                ...(r.hints > 0 ? [`ヒント${r.hints}回`] : []),
+                formatDuration(r.ms),
+              ].join('・'),
+              mark: r.wrong === 0 && r.hints === 0 ? 'correct' : 'partial',
             }),
           ),
         })
@@ -149,6 +161,7 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
       statsRef.current = { ...EMPTY_STATS }
       carRef.current = startCar(courses[index + 1])
       planRef.current = null
+      setHintFor(null)
       setIndex(index + 1)
       setPhase('ready')
     },
@@ -172,6 +185,15 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
     ? exitsFrom(course, upcoming.node, upcoming.from).map((n) => dirOf(upcoming.node, n, cols))
     : []
   const planDir = plan && upcoming && plan.node === upcoming.node ? dirOf(plan.node, plan.next, cols) : null
+  // ヒントは、出したときの曲がり角に着くまで光らせる
+  const hintDir = hintFor && upcoming && hintFor.node === upcoming.node ? hintFor.dir : null
+
+  const showHint = () => {
+    if (phase === 'goal' || !upcoming) return
+    sound('tap')
+    statsRef.current.hints++
+    setHintFor({ node: upcoming.node, dir: dirOf(upcoming.node, correctNext(course, upcoming.node), cols) })
+  }
 
   const press = (dir: Dir) => {
     if (phase === 'goal' || !upcoming || !validDirs.includes(dir)) return
@@ -198,6 +220,7 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
   let message: { text: string; kind: FeedbackKind }
   if (phase === 'goal') message = { text: 'ゴール！', kind: 'correct' }
   else if (notice) message = notice
+  else if (hintDir !== null && planDir !== hintDir) message = { text: 'ひかって いる やじるしを おしましょう', kind: 'info' }
   else if (phase === 'ready') message = { text: 'ちずを みて、ゴールまでの みちを たしかめましょう', kind: 'info' }
   else if (car.waiting) message = { text: 'どちらに まがりますか？', kind: 'info' }
   else if (!upcoming) message = { text: 'このまま ゴールへ', kind: 'info' }
@@ -215,7 +238,7 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
             <button
               key={d}
               type="button"
-              className={`dm-pad-btn dm-pad-${d} ${planDir === d ? 'is-selected' : ''} ${car.waiting && validDirs.includes(d) ? 'is-urgent' : ''}`}
+              className={`dm-pad-btn dm-pad-${d} ${planDir === d ? 'is-selected' : ''} ${car.waiting && validDirs.includes(d) ? 'is-urgent' : ''} ${hintDir === d ? 'is-hint' : ''}`}
               disabled={!validDirs.includes(d) || phase === 'goal'}
               onPointerDown={() => press(d)}
               aria-label={DIR_NAME[d]}
@@ -234,6 +257,8 @@ export default function DriveMazeGame({ difficulty, mode, paused, onFinish }: Ga
             しゅっぱつ
           </button>
         )}
+        {/* こたえ(全部の道順)は出さない: 車の動きに合わせて選ぶ課題なので、ヒントで次の曲がり角だけ助ける */}
+        <AssistBar answered={false} disabled={phase === 'goal' || !upcoming} onHint={showHint} />
       </aside>
 
       <div className="dm-stage" ref={stageRef}>

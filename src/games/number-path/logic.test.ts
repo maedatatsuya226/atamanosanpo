@@ -7,6 +7,7 @@ import {
   isAdjacent,
   LEVELS,
   nextMoves,
+  pathHint,
   randomPath,
   reachableFrom,
   validateBoard,
@@ -51,5 +52,24 @@ describe('buildBoard', () => {
       const allowed = new Set([...b.path, ...b.decoyCells])
       for (const c of fwd) expect(allowed.has(c)).toBe(true)
     }
+  })
+})
+
+describe('pathHint', () => {
+  it('正しい道の上では次のマスを、おとりに入ったら分かれ道を示す', () => {
+    let checked = 0
+    for (let seed = 0; seed < 40; seed++) {
+      const b = buildBoard(4, seededRng(seed))
+      expect(pathHint(b, [b.path[0]])).toEqual({ kind: 'next', cell: b.path[1] })
+      expect(pathHint(b, b.path.slice(0, 5))).toEqual({ kind: 'next', cell: b.path[5] })
+      // おとりへの入口がある道のマスをさがす
+      const decoys = new Set(b.decoyCells)
+      const i = b.path.findIndex((c) => nextMoves(b.values, b.size, c).some((n) => decoys.has(n)))
+      if (i < 0) continue
+      const wrong = nextMoves(b.values, b.size, b.path[i]).find((n) => decoys.has(n))!
+      expect(pathHint(b, [...b.path.slice(0, i + 1), wrong])).toEqual({ kind: 'back', cell: b.path[i] })
+      checked++
+    }
+    expect(checked).toBeGreaterThan(10)
   })
 })

@@ -64,6 +64,14 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
         </div>
         <Toggle label="効果音" checked={settings.sound} onChange={(v) => update({ sound: v })} />
         <Toggle label="ふりがな" checked={settings.furigana} onChange={(v) => update({ furigana: v })} />
+        <Toggle
+          label="ヒント・こたえボタン"
+          checked={settings.assist}
+          onChange={(v) => update({ assist: v })}
+        />
+        <p className="setting-note">
+          道つなぎ・迷路・数字たどり・数字一筆書き・ドライブ迷路に出します。使った回数は結果に表示します。
+        </p>
 
         <section className="about">
           <h2>このアプリについて</h2>

@@ -196,3 +196,24 @@ export function buildPuzzle(level: Difficulty, rng: Rng = defaultRng): Puzzle {
   }
   throw new Error(`盤面を作れませんでした(レベル${level})`)
 }
+
+/** ヒント: 正解の道のうち、向きがずれているタイル(スタートに近いものから)。ずれが無ければ null */
+export function hintTile(p: Puzzle): number | null {
+  const i = p.route.findIndex((cell, k) => turnsToFit(p.tiles[cell]!, p.need[k]) !== 0)
+  return i < 0 ? null : p.route[i]
+}
+
+/** こたえ: 正解の道のタイルを正しい向きにそろえた盤面と、タイルごとに回した回数 */
+export function solvedPuzzle(p: Puzzle): { puzzle: Puzzle; turns: Map<number, number> } {
+  const tiles = [...p.tiles]
+  const turns = new Map<number, number>()
+  p.route.forEach((cell, k) => {
+    const t = tiles[cell]!
+    const n = turnsToFit(t, p.need[k]) ?? 0
+    if (n > 0) {
+      tiles[cell] = { ...t, rot: (t.rot + n) % 4 }
+      turns.set(cell, n)
+    }
+  })
+  return { puzzle: { ...p, tiles }, turns }
+}

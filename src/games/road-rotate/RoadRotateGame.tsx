@@ -1,12 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { CAR_ANGLE, CarIcon } from '../../components/CarIcon'
+import { AssistBar } from '../../components/AssistBar'
 import { Feedback, Progress, type FeedbackKind } from '../../components/Feedback'
 import type { Dir } from '../../core/grid'
 import { useElementSize, usePausableTimeout, useTrialClock } from '../../core/hooks'
 import { useSound } from '../../core/sound'
 import { formatDuration } from '../../core/stopwatch'
 import type { DetailRow, GameProps } from '../../core/types'
-import { BASE, buildPuzzle, drive, minTurns, PUZZLES, rotateTile, type Puzzle, type Shape } from './logic'
+import {
+  BASE,
+  buildPuzzle,
+  drive,
+  hintTile,
+  minTurns,
+  PUZZLES,
+  rotateTile,
+  solvedPuzzle,
+  type Puzzle,
+  type Shape,
+} from './logic'
 import './road-rotate.css'
 
 const CLEAR_MS = 1500
@@ -19,9 +31,14 @@ interface PuzzleRecord {
   minTaps: number
   fails: number
   ms: number
+  /** ヒントを使った回数 */
+  hints: number
+  /** こたえを見た */
+  answered: boolean
 }
 
-type Phase = 'solving' | 'driving' | 'failed' | 'goal'
+/** answered = こたえを表示して「つぎへ」を待っている */
+type Phase = 'solving' | 'driving' | 'failed' | 'goal' | 'answered'
 
 /** 車が通る点(マス目の単位)。左の外から入り、つながっていれば右の外へ出る */
 function drivePoints(p: Puzzle, cells: number[], solved: boolean): [number, number][] {
@@ -73,6 +90,10 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
   const [fails, setFails] = useState(0)
   const [records, setRecords] = useState<PuzzleRecord[]>([])
   const [clearMs, setClearMs] = useState(0)
+  const [hints, setHints] = useState(0)
+  /** ヒントで光らせているタイル */
+  const [hintCell, setHintCell] = useState<number | null>(null)
+  const [hintNote, setHintNote] = useState<string | null>(null)
   const clock = useTrialClock(paused)
   const [stageRef, stage] = useElementSize<HTMLDivElement>()
 
@@ -84,10 +105,14 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
     setBoard(rotateTile(board, cell))
     setSpins((s) => s.map((v, i) => (i === cell ? v + 1 : v)))
     setTaps((n) => n + 1)
+    setHintCell(null)
+    setHintNote(null)
   }
 
   const depart = () => {
     if (phase !== 'solving') return
+    setHintCell(null)
+    setHintNote(null)
     const r = drive(board)
     setRoute({
       pts: drivePoints(board, r.cells, r.solved),
@@ -141,45 +166,73 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
     fails,
   )
 
+  /** この盤面の記録を残して、次の盤面へ(最後なら結果へ) */
+  const goNext = (answered: boolean) => {
+    const all = [...records, { taps, minTaps: minTurns(puzzles[index]), fails, ms: clearMs, hints, answered }]
+    if (index + 1 >= total) {
+      const details = all.map((r, i): DetailRow => {
+        const parts = [`回転${r.taps}回(最少${r.minTaps}回)`, `つながらず${r.fails}回`]
+        if (r.hints > 0) parts.push(`ヒント${r.hints}回`)
+        if (r.answered) parts.push('こたえを見た')
+        parts.push(formatDuration(r.ms))
+        return {
+          label: `${i + 1}面`,
+          value: parts.join('・'),
+          mark: !r.answered && r.fails === 0 && r.hints === 0 ? 'correct' : 'partial',
+        }
+      })
+      onFinish({
+        correct: details.filter((d) => d.mark === 'correct').length,
+        total: all.length,
+        errors: all.reduce((n, r) => n + r.fails, 0),
+        extra: [
+          { label: 'タイルを回した回数', value: `${all.reduce((n, r) => n + r.taps, 0)}回` },
+          { label: '最少の回転数(目安)', value: `${all.reduce((n, r) => n + r.minTaps, 0)}回` },
+          { label: 'ヒントを使った回数', value: `${all.reduce((n, r) => n + r.hints, 0)}回` },
+          { label: 'こたえを見た面', value: `${all.filter((r) => r.answered).length}面` },
+        ],
+        details,
+      })
+      return
+    }
+    const next = puzzles[index + 1]
+    setRecords(all)
+    setIndex(index + 1)
+    setBoard(next)
+    setSpins(next.tiles.map((t) => t?.rot ?? 0))
+    setRoute(null)
+    setProgress(0)
+    setTaps(0)
+    setFails(0)
+    setHints(0)
+    setHintCell(null)
+    setHintNote(null)
+    setPhase('solving')
+    clock.restart()
+  }
+
   // ゴールしたら次の盤面へ
-  usePausableTimeout(
-    () => {
-      const all = [...records, { taps, minTaps: minTurns(puzzles[index]), fails, ms: clearMs }]
-      if (index + 1 >= total) {
-        onFinish({
-          correct: all.filter((r) => r.fails === 0).length,
-          total: all.length,
-          errors: all.reduce((n, r) => n + r.fails, 0),
-          extra: [
-            { label: 'タイルを回した回数', value: `${all.reduce((n, r) => n + r.taps, 0)}回` },
-            { label: '最少の回転数(目安)', value: `${all.reduce((n, r) => n + r.minTaps, 0)}回` },
-          ],
-          details: all.map(
-            (r, i): DetailRow => ({
-              label: `${i + 1}面`,
-              value: `回転${r.taps}回(最少${r.minTaps}回)・つながらず${r.fails}回・${formatDuration(r.ms)}`,
-              mark: r.fails === 0 ? 'correct' : 'partial',
-            }),
-          ),
-        })
-        return
-      }
-      const next = puzzles[index + 1]
-      setRecords(all)
-      setIndex(index + 1)
-      setBoard(next)
-      setSpins(next.tiles.map((t) => t?.rot ?? 0))
-      setRoute(null)
-      setProgress(0)
-      setTaps(0)
-      setFails(0)
-      setPhase('solving')
-      clock.restart()
-    },
-    phase === 'goal' ? CLEAR_MS : null,
-    paused,
-    index,
-  )
+  usePausableTimeout(() => goNext(false), phase === 'goal' ? CLEAR_MS : null, paused, index)
+
+  const showHint = () => {
+    if (phase !== 'solving') return
+    sound('tap')
+    setHints((n) => n + 1)
+    const cell = hintTile(board)
+    setHintCell(cell)
+    setHintNote(cell === null ? 'みちは つながって います。「しゅっぱつ」を おしましょう' : 'ひかって いる タイルを まわして みましょう')
+  }
+
+  const showAnswer = () => {
+    if (phase !== 'solving') return
+    const { puzzle, turns } = solvedPuzzle(board)
+    setBoard(puzzle)
+    setSpins((s) => s.map((v, i) => v + (turns.get(i) ?? 0)))
+    setHintCell(null)
+    setHintNote(null)
+    setClearMs(clock.read())
+    setPhase('answered')
+  }
 
   // 盤面の左右に、スタートとゴールの入口を1マス分ずつとる
   const unit = Math.max(0, Math.min(stage.width / (cols + 2), stage.height / rows))
@@ -191,7 +244,10 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
   if (phase === 'goal') message = { text: 'ゴール！', kind: 'correct' }
   else if (phase === 'failed') message = { text: 'みちが とぎれています。なおして もういちど', kind: 'info' }
   else if (phase === 'driving') message = { text: 'はしっています…', kind: 'info' }
+  else if (phase === 'answered') message = { text: 'これが こたえです', kind: 'info' }
+  else if (hintNote) message = { text: hintNote, kind: 'info' }
   else message = { text: 'つながったら「しゅっぱつ」', kind: 'info' }
+  const onRoute = new Set(board.route)
 
   return (
     <div className="rr">
@@ -207,9 +263,18 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
           つなげます
         </p>
         <Feedback kind={message.kind}>{message.text}</Feedback>
-        <button type="button" className="btn btn-primary btn-lg" onClick={depart} disabled={phase !== 'solving'}>
-          しゅっぱつ
-        </button>
+        {phase !== 'answered' && (
+          <button type="button" className="btn btn-primary btn-lg" onClick={depart} disabled={phase !== 'solving'}>
+            しゅっぱつ
+          </button>
+        )}
+        <AssistBar
+          answered={phase === 'answered'}
+          disabled={phase !== 'solving'}
+          onHint={showHint}
+          onAnswer={showAnswer}
+          onNext={() => goNext(true)}
+        />
       </aside>
 
       <div className="rr-stage" ref={stageRef}>
@@ -229,7 +294,13 @@ export default function RoadRotateGame({ difficulty, mode, paused, onFinish }: G
                 <button
                   key={cell}
                   type="button"
-                  className={`rr-tile ${t ? '' : 'is-empty'} ${route?.stopCell === cell && phase === 'failed' ? 'is-stop' : ''}`}
+                  className={[
+                    'rr-tile',
+                    t ? '' : 'is-empty',
+                    route?.stopCell === cell && phase === 'failed' ? 'is-stop' : '',
+                    hintCell === cell ? 'is-hint' : '',
+                    phase === 'answered' && onRoute.has(cell) ? 'is-answer' : '',
+                  ].join(' ')}
                   onPointerDown={() => press(cell)}
                   disabled={!t || phase !== 'solving'}
                   aria-label={t ? 'みちの タイル' : 'あきち'}

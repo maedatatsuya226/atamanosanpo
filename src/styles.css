@@ -822,3 +822,31 @@ rt {
     padding: 0 32px;
   }
 }
+
+/* ===== ヒント・こたえ(パズル型の課題) ===== */
+.assist-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.assist-bar .btn {
+  /* 幅が足りないときは、ことばの途中で折り返さずにボタンごと次の行へ */
+  flex: 1 0 auto;
+  white-space: nowrap;
+  min-height: 52px;
+  padding: 0 12px;
+}
+.setting-note {
+  margin-top: -8px;
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+/* ヒントで光らせるマス・タイル(各課題の SVG / ボタンに付ける) */
+@keyframes hint-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.hint-glow {
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}

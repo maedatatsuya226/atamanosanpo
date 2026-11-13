@@ -129,3 +129,18 @@ export function traceTo(m: Maze, trace: Trace, cell: number): { trace: Trace; ev
 export function reachedGoal(m: Maze, trace: Trace): boolean {
   return trace.path[trace.path.length - 1] === m.goal
 }
+
+export type MazeHint =
+  /** 正しい道の上にいる: この先のマス(数マス) */
+  | { kind: 'next'; cells: number[] }
+  /** 正しい道から外れている: ここまで戻るとよい */
+  | { kind: 'back'; cell: number }
+
+/** ヒント: 正しい道の上ならこの先を少しだけ、外れていれば外れた所を示す */
+export function mazeHint(m: Maze, trace: Trace, ahead = 3): MazeHint {
+  const p = trace.path
+  let k = 0
+  while (k < p.length && p[k] === m.solution[k]) k++
+  if (k === p.length) return { kind: 'next', cells: m.solution.slice(k, k + ahead) }
+  return { kind: 'back', cell: p[k - 1] }
+}

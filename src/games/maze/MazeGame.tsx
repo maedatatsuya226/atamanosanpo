@@ -1,10 +1,22 @@
 import { useMemo, useRef, useState, type PointerEvent } from 'react'
+import { AssistBar } from '../../components/AssistBar'
 import { Feedback, Progress, type FeedbackKind } from '../../components/Feedback'
 import { useElementSize, usePausableTimeout, useTrialClock } from '../../core/hooks'
 import { useSound } from '../../core/sound'
 import { formatDuration } from '../../core/stopwatch'
 import type { DetailRow, GameProps } from '../../core/types'
-import { buildMaze, isOpen, MAZES, reachedGoal, startTrace, traceTo, type Maze, type Trace } from './logic'
+import {
+  buildMaze,
+  isOpen,
+  MAZES,
+  mazeHint,
+  reachedGoal,
+  startTrace,
+  traceTo,
+  type Maze,
+  type MazeHint,
+  type Trace,
+} from './logic'
 import './maze.css'
 
 const CLEAR_MS = 1500
@@ -17,6 +29,10 @@ interface MazeRecord {
   bumps: number
   backs: number
   ms: number
+  /** ヒントを使った回数 */
+  hints: number
+  /** こたえを見た */
+  answered: boolean
 }
 
 /** 壁の線(マス目の単位)。スタートの左とゴールの右は入口・出口として開けておく */
@@ -49,7 +65,13 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
   const setTrace = (t: Trace) => {
     traceRef.current = t
     setTraceState(t)
+    // 線が変わったら、ヒントの表示は消す
+    setHint(null)
   }
+  const [hints, setHints] = useState(0)
+  const [hint, setHint] = useState<MazeHint | null>(null)
+  /** こたえを表示して「つぎへ」を待っている */
+  const [answered, setAnswered] = useState(false)
   const [cleared, setCleared] = useState(false)
   const [clearMs, setClearMs] = useState(0)
   const [records, setRecords] = useState<MazeRecord[]>([])
@@ -67,35 +89,66 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
 
   usePausableTimeout(() => setNotice(null), notice ? NOTICE_MS : null, paused, notice?.n)
 
+  /** この迷路の記録を残して、次の迷路へ(最後なら結果へ) */
+  const goNext = (wasAnswered: boolean) => {
+    const t = traceRef.current
+    const all = [...records, { strays: t.strays, bumps: t.bumps, backs: t.backs, ms: clearMs, hints, answered: wasAnswered }]
+    if (index + 1 >= total) {
+      const details = all.map((r, i): DetailRow => {
+        const parts = [`わき道${r.strays}回`, `壁${r.bumps}回`]
+        if (r.hints > 0) parts.push(`ヒント${r.hints}回`)
+        if (r.answered) parts.push('こたえを見た')
+        parts.push(formatDuration(r.ms))
+        return {
+          label: `${i + 1}つめ`,
+          value: parts.join('・'),
+          mark: r.strays === 0 && r.hints === 0 && !r.answered ? 'correct' : 'partial',
+        }
+      })
+      onFinish({
+        correct: details.filter((d) => d.mark === 'correct').length,
+        total: all.length,
+        errors: all.reduce((n, r) => n + r.strays, 0),
+        extra: [
+          { label: '壁に当たった回数', value: `${all.reduce((n, r) => n + r.bumps, 0)}回` },
+          { label: '線を戻した回数', value: `${all.reduce((n, r) => n + r.backs, 0)}回` },
+          { label: 'ヒントを使った回数', value: `${all.reduce((n, r) => n + r.hints, 0)}回` },
+          { label: 'こたえを見た迷路', value: `${all.filter((r) => r.answered).length}つ` },
+        ],
+        details,
+      })
+      return
+    }
+    setRecords(all)
+    setIndex(index + 1)
+    setTrace(startTrace(mazes[index + 1]))
+    setHints(0)
+    setAnswered(false)
+    setCleared(false)
+    clock.restart()
+  }
+
+  const showHint = () => {
+    if (cleared || answered) return
+    sound('tap')
+    setHints((n) => n + 1)
+    const h = mazeHint(maze, traceRef.current)
+    setHint(h)
+    showNotice(h.kind === 'next' ? 'ひかって いる ほうへ すすみましょう' : 'ひかって いる ところまで もどって みましょう')
+  }
+
+  const showAnswer = () => {
+    if (cleared || answered) return
+    dragging.current = false
+    setHint(null)
+    setNotice(null)
+    setClearMs(clock.read())
+    setAnswered(true)
+  }
+
   // ゴールしたら次の迷路へ
   usePausableTimeout(
-    () => {
-      const all = [...records, { strays: trace.strays, bumps: trace.bumps, backs: trace.backs, ms: clearMs }]
-      if (index + 1 >= total) {
-        onFinish({
-          correct: all.filter((r) => r.strays === 0).length,
-          total: all.length,
-          errors: all.reduce((n, r) => n + r.strays, 0),
-          extra: [
-            { label: '壁に当たった回数', value: `${all.reduce((n, r) => n + r.bumps, 0)}回` },
-            { label: '線を戻した回数', value: `${all.reduce((n, r) => n + r.backs, 0)}回` },
-          ],
-          details: all.map(
-            (r, i): DetailRow => ({
-              label: `${i + 1}つめ`,
-              value: `わき道${r.strays}回・壁${r.bumps}回・${formatDuration(r.ms)}`,
-              mark: r.strays === 0 ? 'correct' : 'partial',
-            }),
-          ),
-        })
-        return
-      }
-      setRecords(all)
-      setIndex(index + 1)
-      setTrace(startTrace(mazes[index + 1]))
-      setCleared(false)
-      clock.restart()
-    },
+    () => goNext(false),
     cleared ? CLEAR_MS : null,
     paused,
     index,
@@ -132,7 +185,7 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
   }
 
   const onDown = (e: PointerEvent<SVGSVGElement>) => {
-    if (cleared) return
+    if (cleared || answered) return
     e.currentTarget.setPointerCapture(e.pointerId)
     dragging.current = true
     lastCell.current = null
@@ -163,7 +216,7 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
 
   const restart = () => {
     const now = traceRef.current
-    if (cleared || now.path.length <= 1) return
+    if (cleared || answered || now.path.length <= 1) return
     sound('tap')
     setTrace({ ...now, path: [maze.start], backs: now.backs + 1 })
   }
@@ -180,6 +233,7 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
 
   let message: { text: string; kind: FeedbackKind }
   if (cleared) message = { text: 'ゴール！', kind: 'correct' }
+  else if (answered) message = { text: 'これが こたえです', kind: 'info' }
   else if (notice) message = { text: notice.text, kind: 'info' }
   else message = { text: 'まるを ゆびで うごかして ゴールへ', kind: 'info' }
 
@@ -195,9 +249,18 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
           みちを ゆびで なぞります
         </p>
         <Feedback kind={message.kind}>{message.text}</Feedback>
-        <button type="button" className="btn btn-secondary btn-lg" onClick={restart} disabled={cleared || trace.path.length <= 1}>
-          さいしょから
-        </button>
+        {!answered && (
+          <button type="button" className="btn btn-secondary btn-lg" onClick={restart} disabled={cleared || trace.path.length <= 1}>
+            さいしょから
+          </button>
+        )}
+        <AssistBar
+          answered={answered}
+          disabled={cleared}
+          onHint={showHint}
+          onAnswer={showAnswer}
+          onNext={() => goNext(true)}
+        />
       </aside>
 
       <div className="mz-stage" ref={stageRef}>
@@ -216,6 +279,29 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
           >
             <rect className="mz-floor" x={0} y={0} width={cols} height={rows} />
             <polyline className="mz-trail" points={points.map(([x, y]) => `${x},${y}`).join(' ')} />
+            {/* ヒント: この先のマス、または戻る所 */}
+            {hint &&
+              !answered &&
+              (hint.kind === 'next' ? hint.cells : [hint.cell]).map((c) => (
+                <rect
+                  key={`h${c}`}
+                  className="mz-hint hint-glow"
+                  x={(c % cols) + 0.12}
+                  y={Math.floor(c / cols) + 0.12}
+                  width={0.76}
+                  height={0.76}
+                  rx={0.15}
+                />
+              ))}
+            {/* こたえ: スタートからゴールまでの道 */}
+            {answered && (
+              <polyline
+                className="mz-answer"
+                points={[[-0.5, startY] as [number, number], ...maze.solution.map(center), [cols + 0.5, goalY] as [number, number]]
+                  .map(([x, y]) => `${x},${y}`)
+                  .join(' ')}
+              />
+            )}
             <g className="mz-walls">
               {walls.map(([x1, y1, x2, y2]) => (
                 <line key={`${x1}-${y1}-${x2}-${y2}`} x1={x1} y1={y1} x2={x2} y2={y2} />
@@ -230,7 +316,7 @@ export default function MazeGame({ difficulty, mode, paused, onFinish }: GamePro
               d={`M ${cols + 0.4} ${goalY - 0.18} L ${cols + 0.7} ${goalY - 0.07} L ${cols + 0.4} ${goalY + 0.04} Z`}
             />
 
-            {!cleared && <circle className="mz-head" cx={head[0]} cy={head[1]} r={0.3} />}
+            {!cleared && !answered && <circle className="mz-head" cx={head[0]} cy={head[1]} r={0.3} />}
           </svg>
         )}
       </div>

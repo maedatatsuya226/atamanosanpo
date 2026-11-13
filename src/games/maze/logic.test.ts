@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { seededRng } from '../../core/random'
 import { DIFFICULTIES } from '../../core/types'
-import { buildMaze, isOpen, LEVELS, reachedGoal, startTrace, traceTo, type Maze, type Trace } from './logic'
+import { buildMaze, isOpen, LEVELS, mazeHint, reachedGoal, startTrace, traceTo, type Maze, type Trace } from './logic'
 
 function isGridNeighbor(a: number, b: number, cols: number): boolean {
   const ra = Math.floor(a / cols)
@@ -134,6 +134,26 @@ describe('traceTo', () => {
       const r = traceTo(m, t, side)
       expect(r.event).toBe('extend')
       expect(r.trace.strays).toBe(1)
+      checked++
+    }
+    expect(checked).toBeGreaterThan(10)
+  })
+})
+
+describe('mazeHint', () => {
+  it('正しい道の上では先の数マスを、外れたら外れた所を示す', () => {
+    let checked = 0
+    for (let seed = 0; seed < 40; seed++) {
+      const m = buildMaze(3, seededRng(seed))
+      let t = startTrace(m)
+      expect(mazeHint(m, t)).toEqual({ kind: 'next', cells: m.solution.slice(1, 4) })
+      const onSol = new Set(m.solution)
+      const i = m.solution.findIndex((cell) => m.adj[cell].some((x) => !onSol.has(x)))
+      if (i < 0) continue
+      for (const cell of m.solution.slice(1, i + 1)) t = traceTo(m, t, cell).trace
+      const side = m.adj[m.solution[i]].find((x) => !onSol.has(x))!
+      t = traceTo(m, t, side).trace
+      expect(mazeHint(m, t)).toEqual({ kind: 'back', cell: m.solution[i] })
       checked++
     }
     expect(checked).toBeGreaterThan(10)

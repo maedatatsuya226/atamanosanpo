@@ -155,3 +155,10 @@
     grid-template-rows: repeat(3, var(--tap));
   }
 }
+
+/* ヒントで光らせる矢印 */
+.dm-pad-btn.is-hint:not(.is-selected) {
+  border-color: #e0a100;
+  background: rgba(224, 161, 0, 0.22);
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}

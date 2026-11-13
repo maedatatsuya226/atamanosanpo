@@ -6,6 +6,8 @@ import {
   bit,
   buildPuzzle,
   drive,
+  hintTile,
+  solvedPuzzle,
   LEVELS,
   minTurns,
   rotateMask,
@@ -113,5 +115,21 @@ describe('drive', () => {
     let q = p
     for (let k = 0; k < 4 && tileMask(q.tiles[q.start]) & bit(3); k++) q = rotateTile(q, q.start)
     expect(drive(q)).toEqual({ solved: false, cells: [] })
+  })
+})
+
+describe('ヒントとこたえ', () => {
+  it('ヒントはずれている道のタイルを指し、こたえの盤面はゴールまでつながる', () => {
+    for (let seed = 0; seed < 40; seed++) {
+      const p = buildPuzzle(4, seededRng(seed))
+      const h = hintTile(p)
+      expect(h).not.toBeNull()
+      const k = p.route.indexOf(h!)
+      expect(turnsToFit(p.tiles[h!]!, p.need[k])).not.toBe(0)
+      const { puzzle, turns } = solvedPuzzle(p)
+      expect(drive(puzzle).solved).toBe(true)
+      expect(hintTile(puzzle)).toBeNull()
+      expect([...turns.values()].reduce((a, b) => a + b, 0)).toBe(minTurns(p))
+    }
   })
 })

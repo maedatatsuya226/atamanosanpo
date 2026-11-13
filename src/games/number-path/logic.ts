@@ -203,3 +203,17 @@ export function buildBoard(level: Difficulty, rng: Rng = defaultRng): Board {
   }
   throw new Error('数字たどりの盤面を作れませんでした')
 }
+
+export type PathHint =
+  /** 正しい道の上にいる: 次に進むマス */
+  | { kind: 'next'; cell: number }
+  /** おとり(行き止まり)に入っている: ここまで戻るとよい */
+  | { kind: 'back'; cell: number }
+
+/** ヒント: 正しい道の上なら次のマス、おとりに入っていれば戻る所 */
+export function pathHint(board: Board, trail: readonly number[]): PathHint {
+  let k = 0
+  while (k < trail.length && trail[k] === board.path[k]) k++
+  if (k === trail.length) return { kind: 'next', cell: board.path[k] }
+  return { kind: 'back', cell: trail[k - 1] }
+}

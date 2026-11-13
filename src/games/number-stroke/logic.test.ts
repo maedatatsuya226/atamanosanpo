@@ -3,13 +3,17 @@ import { seededRng } from '../../core/random'
 import { DIFFICULTIES } from '../../core/types'
 import {
   buildBoard,
+  cellOfNumber,
   checkStep,
+  completeFrom,
   hamiltonianPath,
   isAdjacent,
   isComplete,
   isStuck,
   LEVELS,
+  neighbors,
   numberPositions,
+  strokeHint,
   validatePath,
   type Board,
 } from './logic'
@@ -157,5 +161,58 @@ describe('checkStep', () => {
   it('全部通って最後の数字で終われば完成', () => {
     expect(isComplete(fixed, fixed.solution)).toBe(true)
     expect(isComplete(fixed, fixed.solution.slice(0, -1))).toBe(false)
+  })
+})
+
+describe('ヒント', () => {
+  it('作った道をたどっている途中なら、作った道の次のマスを指す', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const b = buildBoard(5, 'main', seededRng(seed))
+      for (const len of [1, 3, 7]) {
+        const h = strokeHint(b, b.solution.slice(0, len))
+        expect(h).toEqual({ kind: 'next', cell: b.solution[len] })
+      }
+    }
+  })
+
+  it('ちがう道でも最後まで行けるなら、その続きのマスを指し、指すとおりに進めば必ずゴールできる', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const b = buildBoard(4, 'main', seededRng(seed))
+      let trail = [cellOfNumber(b, 1)]
+      // ヒントのとおりに最後まで進む
+      for (let guard = 0; guard < 40 && !isComplete(b, trail); guard++) {
+        const h = strokeHint(b, trail)
+        if (h.kind === 'next') {
+          expect(checkStep(b, trail, h.cell)).toBe('ok')
+          trail = [...trail, h.cell]
+        } else {
+          trail = trail.slice(0, h.length)
+        }
+      }
+      expect(isComplete(b, trail)).toBe(true)
+      expect(validatePath(b, trail)).toBe(true)
+    }
+  })
+
+  it('行き詰まる道では、最後まで行ける所まで戻るよう指す', () => {
+    let checked = 0
+    for (let seed = 0; seed < 60; seed++) {
+      const b = buildBoard(3, 'main', seededRng(seed))
+      // 作った道から外れて、行き詰まる道をさがす
+      const start = cellOfNumber(b, 1)
+      for (const first of neighbors(start, b.size)) {
+        if (first === b.solution[1] || checkStep(b, [start], first) !== 'ok') continue
+        const trail = [start, first]
+        if (completeFrom(b, trail)) continue
+        const h = strokeHint(b, trail)
+        expect(h.kind).toBe('back')
+        if (h.kind === 'back') {
+          expect(h.length).toBeLessThan(trail.length)
+          expect(completeFrom(b, trail.slice(0, h.length))).not.toBeNull()
+        }
+        checked++
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
   })
 })

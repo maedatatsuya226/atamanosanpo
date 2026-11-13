@@ -89,3 +89,20 @@
     display: none;
   }
 }
+
+/* ヒントで光らせるマスと、こたえの道 */
+.mz-hint {
+  fill: rgba(224, 161, 0, 0.3);
+  stroke: #e0a100;
+  stroke-width: 0.06;
+  pointer-events: none;
+}
+.mz-answer {
+  fill: none;
+  stroke: #e0a100;
+  stroke-width: 0.16;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 0.02 0.26;
+  pointer-events: none;
+}

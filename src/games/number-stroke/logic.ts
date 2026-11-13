@@ -221,3 +221,50 @@ export function validatePath(board: Board, path: readonly number[]): boolean {
   const seen = path.map((c) => board.numbers[c]).filter((n) => n > 0)
   return seen.length === board.last && seen.every((n, i) => n === i + 1)
 }
+
+/**
+ * いまの道(trail)から、ルールどおりに最後まで行ける道を1つさがす(見つからなければ null)。
+ * 答えは1通りとは限らないので、患者さんがたどった道の続きを探す。作った道の続きなら、それをそのまま使う。
+ */
+export function completeFrom(board: Board, trail: readonly number[], budget = 200000): number[] | null {
+  const total = board.numbers.length
+  if (trail.every((c, i) => board.solution[i] === c)) return [...board.solution]
+  const path = [...trail]
+  const used = new Set(path)
+  let steps = 0
+  const search = (): boolean => {
+    if (path.length === total) return isComplete(board, path)
+    if (steps++ > budget) return false
+    const end = path[path.length - 1]
+    // 行き先の少ないマスから試す(早く行き止まりに気づける)
+    const options = neighbors(end, board.size)
+      .filter((n) => checkStep(board, path, n) === 'ok')
+      .map((n) => ({ n, free: neighbors(n, board.size).filter((m) => !used.has(m)).length }))
+      .sort((a, b) => a.free - b.free)
+    for (const { n } of options) {
+      path.push(n)
+      used.add(n)
+      if (search()) return true
+      path.pop()
+      used.delete(n)
+    }
+    return false
+  }
+  return search() ? path : null
+}
+
+export type StrokeHint =
+  /** 次に進むとよいマス */
+  | { kind: 'next'; cell: number }
+  /** この先は最後まで行けないので、道を length マスまで戻すとよい(その時の先端は cell) */
+  | { kind: 'back'; length: number; cell: number }
+
+/** ヒント: いまの道の続きで最後まで行けるなら次のマス、行けなければ戻る所 */
+export function strokeHint(board: Board, trail: readonly number[]): StrokeHint {
+  const full = completeFrom(board, trail)
+  if (full) return { kind: 'next', cell: full[trail.length] }
+  for (let len = trail.length - 1; len >= 1; len--) {
+    if (completeFrom(board, trail.slice(0, len))) return { kind: 'back', length: len, cell: trail[len - 1] }
+  }
+  return { kind: 'back', length: 1, cell: trail[0] }
+}
