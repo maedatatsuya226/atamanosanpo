@@ -2,8 +2,11 @@ import { lazy, type ComponentType } from 'react'
 import type { DomainId, GameDef, GameProps } from '../core/types'
 // 各課題の説明文・難易度の説明(課題フォルダの meta.ts にある)
 import { META as COLOR_WORD_META } from './color-word/meta'
+import { META as DRIVE_MAZE_META } from './drive-maze/meta'
+import { META as MAZE_META } from './maze/meta'
 import { META as NUMBER_STROKE_META } from './number-stroke/meta'
 import { META as PICTURE_MEMORY_META } from './picture-memory/meta'
+import { META as ROAD_ROTATE_META } from './road-rotate/meta'
 import { META as SAME_PICTURE_META } from './same-picture/meta'
 import { META as SAMEGAME_META } from './samegame/meta'
 import { META as STOPWATCH_META } from './stopwatch/meta'
@@ -51,6 +54,16 @@ export const GAMES: readonly GameDef[] = [
     description: VIEWPOINT_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./viewpoint/ViewpointGame')),
+  },
+  {
+    id: 'road-rotate',
+    domain: 'spatial',
+    title: '道つなぎ',
+    ...ROAD_ROTATE_META,
+    summary: '道のタイルを回して、スタートからゴールまでつなげる',
+    description: ROAD_ROTATE_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./road-rotate/RoadRotateGame')),
   },
   // ---- 見当識 ----
   {
@@ -148,6 +161,26 @@ export const GAMES: readonly GameDef[] = [
     description: NUMBER_STROKE_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./number-stroke/NumberStrokeGame')),
+  },
+  {
+    id: 'maze',
+    domain: 'planning',
+    title: '迷路',
+    ...MAZE_META,
+    summary: 'スタートからゴールまで、迷路の道を指でなぞって進む',
+    description: MAZE_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./maze/MazeGame')),
+  },
+  {
+    id: 'drive-maze',
+    domain: 'planning',
+    title: 'ドライブ迷路',
+    ...DRIVE_MAZE_META,
+    summary: '走る車を、曲がり角に着く前に向きを決めてゴールへ導く',
+    description: DRIVE_MAZE_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./drive-maze/DriveMazeGame')),
   },
   // ---- 注意 ----
   {

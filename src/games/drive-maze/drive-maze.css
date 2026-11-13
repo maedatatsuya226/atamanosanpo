@@ -1,0 +1,157 @@
+.dm {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(240px, 290px) minmax(0, 1fr);
+  gap: 24px;
+}
+.dm-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+.dm-side .feedback {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+
+/* 十字の矢印ボタン */
+.dm-pad {
+  display: grid;
+  grid-template-columns: repeat(3, calc(var(--tap) * 1.25));
+  grid-template-rows: repeat(3, calc(var(--tap) * 1.25));
+  gap: 6px;
+  justify-content: center;
+}
+.dm-pad-btn {
+  font: inherit;
+  font-size: 1.8rem;
+  line-height: 1;
+  border: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--primary);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.dm-pad-0 {
+  grid-area: 1 / 2;
+}
+.dm-pad-1 {
+  grid-area: 2 / 3;
+}
+.dm-pad-2 {
+  grid-area: 3 / 2;
+}
+.dm-pad-3 {
+  grid-area: 2 / 1;
+}
+.dm-pad-btn:disabled {
+  border-color: var(--line);
+  color: var(--line);
+  background: var(--surface-2);
+  cursor: default;
+}
+.dm-pad-btn.is-selected {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+.dm-pad-btn.is-urgent {
+  box-shadow: 0 0 0 4px var(--focus);
+}
+.dm-pad-center {
+  grid-area: 2 / 2;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+/* 地図 */
+.dm-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.dm-map {
+  display: block;
+  touch-action: none;
+}
+.dm-ground {
+  fill: #e3ecd6;
+}
+.dm-road line {
+  stroke: #686d73;
+  stroke-width: 0.46;
+  stroke-linecap: round;
+}
+.dm-lane line {
+  stroke: #ffffff;
+  stroke-width: 0.035;
+  stroke-dasharray: 0.12 0.12;
+}
+.dm-label rect {
+  fill: #ffffff;
+  stroke: #1d2320;
+  stroke-width: 0.02;
+}
+.dm-label text {
+  font-size: 0.15px;
+  font-weight: 800;
+  fill: #1d2320;
+}
+.dm-goal > circle {
+  fill: #ffffff;
+  stroke: #2f7d4f;
+  stroke-width: 0.05;
+}
+.dm-goal > line {
+  stroke: #1d2320;
+  stroke-width: 0.035;
+}
+.dm-goal > path {
+  fill: #d64545;
+}
+.dm-corner {
+  fill: none;
+  stroke: #e0a100;
+  stroke-width: 0.05;
+  stroke-dasharray: 0.12 0.08;
+}
+.dm-corner.is-waiting {
+  stroke-width: 0.08;
+  stroke-dasharray: none;
+  animation: dm-pulse 0.9s ease-in-out infinite;
+}
+@keyframes dm-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.dm-plan line {
+  stroke: #2f6f5e;
+  stroke-width: 0.1;
+  stroke-linecap: round;
+}
+.dm-plan path {
+  fill: #2f6f5e;
+}
+@media (max-width: 900px) {
+  .dm {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .dm-side {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+  .dm-pad {
+    grid-template-columns: repeat(3, var(--tap));
+    grid-template-rows: repeat(3, var(--tap));
+  }
+}

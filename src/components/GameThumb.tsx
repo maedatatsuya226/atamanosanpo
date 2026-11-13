@@ -455,7 +455,107 @@ function ColorWord() {
   )
 }
 
+function DriveMaze() {
+  const road = 'M 18 78 H 62 V 30 H 112 V 72 H 142'
+  return (
+    <Frame label="くるまを まがりかどで みちびいて ゴールへ">
+      <rect x={4} y={6} width={152} height={88} rx={10} fill="#e3ecd6" />
+      {/* 行き止まりのわき道 */}
+      <path d="M 62 54 H 34 M 112 30 V 14 H 140" fill="none" stroke="#686d73" strokeWidth={12} strokeLinecap="round" />
+      <path d={road} fill="none" stroke="#686d73" strokeWidth={12} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={road} fill="none" stroke="#fff" strokeWidth={1.2} strokeDasharray="4 4" />
+      {/* 次の曲がり角と、決めた向き */}
+      <circle cx={62} cy={54} r={11} fill="none" stroke={LIT} strokeWidth={2.5} strokeDasharray="4 3" />
+      <path d="M 62 54 V 44" stroke={PRIMARY} strokeWidth={3.5} strokeLinecap="round" />
+      <path d="M 62 37 L 56.5 45 L 67.5 45 Z" fill={PRIMARY} />
+      {/* 車(上向き) */}
+      <g transform="translate(62 70) rotate(-90)">
+        <rect x={-8} y={-5.5} width={16} height={11} rx={3} fill="#d64545" stroke="#7a1f1f" strokeWidth={0.8} />
+        <rect x={2} y={-4} width={3} height={8} rx={1} fill="#cfe6f7" />
+      </g>
+      {/* ゴールの旗 */}
+      <line x1={142} y1={80} x2={142} y2={58} stroke={INK} strokeWidth={1.8} />
+      <path d="M 142 58 L 154 63 L 142 68 Z" fill="#d64545" />
+    </Frame>
+  )
+}
+
+function RoadRotate() {
+  // 3×2のタイル。右上のタイルだけ向きがずれていて、回す矢印がついている
+  const s = 30
+  const x0 = 35
+  const y0 = 20
+  const roads: { c: number; r: number; d: string }[] = [
+    { c: 0, r: 0, d: 'M 0 15 H 30' },
+    { c: 1, r: 0, d: 'M 0 15 H 15 V 30' },
+    { c: 1, r: 1, d: 'M 15 0 V 15 H 30' },
+    { c: 2, r: 1, d: 'M 0 15 H 30' },
+    { c: 2, r: 0, d: 'M 15 0 V 30' },
+    { c: 0, r: 1, d: 'M 0 15 H 15 V 0' },
+  ]
+  return (
+    <Frame label="みちを まわして スタートから ゴールまで つなげる">
+      <rect x={x0} y={y0} width={s * 3} height={s * 2} rx={4} fill="#e3ecd6" />
+      {roads.map(({ c, r, d }) => (
+        <g key={`${c}-${r}`} transform={`translate(${x0 + c * s} ${y0 + r * s})`}>
+          <rect width={s} height={s} fill="none" stroke={LINE} strokeWidth={0.8} />
+          <path d={d} fill="none" stroke="#686d73" strokeWidth={12} strokeLinejoin="round" />
+        </g>
+      ))}
+      <rect x={x0 + 2 * s} y={y0} width={s} height={s} fill="none" stroke={LIT} strokeWidth={2.5} />
+      <path d={`M ${x0 + 2 * s + 6} ${y0 - 6} A 14 14 0 0 1 ${x0 + 3 * s + 4} ${y0 + 6}`} fill="none" stroke={PRIMARY} strokeWidth={2.5} />
+      <path d={`M ${x0 + 3 * s + 8} ${y0 + 2} L ${x0 + 3 * s + 2} ${y0 + 10} L ${x0 + 3 * s - 2} ${y0 + 2} Z`} fill={PRIMARY} />
+      {/* 入口と出口 */}
+      <path d={`M 10 ${y0 + 15} H ${x0}`} stroke="#686d73" strokeWidth={12} />
+      <path d={`M ${x0 + 3 * s} ${y0 + s + 15} H 150`} stroke="#686d73" strokeWidth={12} />
+      <g transform={`translate(18 ${y0 + 15})`}>
+        <rect x={-7} y={-4.5} width={14} height={9} rx={2.5} fill="#d64545" stroke="#7a1f1f" strokeWidth={0.8} />
+        <rect x={2} y={-3.2} width={2.6} height={6.4} rx={1} fill="#cfe6f7" />
+      </g>
+      <line x1={150} y1={y0 + s + 24} x2={150} y2={y0 + s + 2} stroke={INK} strokeWidth={1.8} />
+      <path d={`M 150 ${y0 + s + 2} L 158 ${y0 + s + 6} L 150 ${y0 + s + 10} Z`} fill="#d64545" />
+      <text x={80} y={96} textAnchor="middle" fontSize={8} fontWeight={700} fill={SUB}>
+        タップで まわす
+      </text>
+    </Frame>
+  )
+}
+
+function Maze() {
+  // 5×3マスの小さな迷路と、なぞった線
+  const s = 18
+  const x0 = 35
+  const y0 = 23
+  const walls = [
+    `M ${x0} ${y0} H ${x0 + 5 * s}`,
+    `M ${x0} ${y0 + 3 * s} H ${x0 + 5 * s}`,
+    `M ${x0} ${y0 + s} V ${y0 + 3 * s}`,
+    `M ${x0 + 5 * s} ${y0} V ${y0 + 2 * s}`,
+    `M ${x0 + s} ${y0} V ${y0 + 2 * s}`,
+    `M ${x0 + 2 * s} ${y0 + s} V ${y0 + 3 * s}`,
+    `M ${x0 + 3 * s} ${y0} V ${y0 + 2 * s}`,
+    `M ${x0 + 4 * s} ${y0 + s} V ${y0 + 3 * s}`,
+  ]
+  const c = (col: number, row: number) => `${x0 + col * s + s / 2},${y0 + row * s + s / 2}`
+  const trail = [`${x0 - 12},${y0 + s / 2}`, c(0, 0), c(0, 2), c(1, 2), c(1, 0), c(2, 0)].join(' ')
+  return (
+    <Frame label="めいろを ゆびで なぞって ゴールへ">
+      <rect x={x0} y={y0} width={5 * s} height={3 * s} fill={SURF} />
+      <polyline points={trail} fill="none" stroke={PRIMARY} strokeOpacity={0.55} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={x0 + 2 * s + s / 2} cy={y0 + s / 2} r={5.5} fill={PRIMARY} stroke="#fff" strokeWidth={1.2} />
+      {walls.map((d) => (
+        <path key={d} d={d} stroke={INK} strokeWidth={2.5} strokeLinecap="square" fill="none" />
+      ))}
+      <line x1={x0 + 5 * s + 12} y1={y0 + 3 * s - 2} x2={x0 + 5 * s + 12} y2={y0 + 2 * s + 1} stroke={INK} strokeWidth={1.6} />
+      <path d={`M ${x0 + 5 * s + 12} ${y0 + 2 * s + 1} L ${x0 + 5 * s + 20} ${y0 + 2 * s + 5} L ${x0 + 5 * s + 12} ${y0 + 2 * s + 9} Z`} fill="#d64545" />
+    </Frame>
+  )
+}
+
 const THUMBS: Record<string, () => ReactNode> = {
+  maze: Maze,
+  'road-rotate': RoadRotate,
+  'drive-maze': DriveMaze,
   'figure-match': FigureMatch,
   samegame: Samegame,
   viewpoint: Viewpoint,

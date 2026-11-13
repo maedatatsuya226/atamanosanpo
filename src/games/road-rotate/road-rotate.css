@@ -1,0 +1,115 @@
+.rr {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+}
+.rr-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+.rr-instruction {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.rr-side .feedback {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+.rr-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.rr-board {
+  position: relative;
+}
+.rr-grid {
+  position: absolute;
+  top: 0;
+  display: grid;
+  background: #e3ecd6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.rr-tile {
+  position: relative;
+  padding: 0;
+  border: 1px solid rgba(29, 35, 32, 0.12);
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.rr-tile:disabled {
+  cursor: default;
+}
+.rr-tile.is-stop {
+  box-shadow: inset 0 0 0 4px var(--ng);
+  background: rgba(178, 58, 58, 0.15);
+}
+.rr-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.18s ease-out;
+}
+.rr-road line {
+  stroke: #686d73;
+  stroke-width: 0.42;
+}
+.rr-road circle {
+  fill: #686d73;
+}
+.rr-lane line {
+  stroke: #ffffff;
+  stroke-width: 0.03;
+  stroke-dasharray: 0.08 0.08;
+}
+.rr-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.rr-gate {
+  stroke: #686d73;
+  stroke-width: 0.42;
+}
+.rr-tag rect {
+  fill: #ffffff;
+  stroke: #1d2320;
+  stroke-width: 0.02;
+}
+.rr-tag text {
+  font-size: 0.15px;
+  font-weight: 800;
+  fill: #1d2320;
+}
+.rr-pole {
+  stroke: #1d2320;
+  stroke-width: 0.035;
+}
+.rr-flag {
+  fill: #d64545;
+}
+
+@media (max-width: 900px) {
+  .rr {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .rr-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .rr-instruction br {
+    display: none;
+  }
+}

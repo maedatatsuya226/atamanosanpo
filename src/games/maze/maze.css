@@ -1,0 +1,91 @@
+.mz {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+}
+.mz-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+.mz-instruction {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.mz-side .feedback {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+.mz-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.mz-map {
+  display: block;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+  /* 上の端の行にあるスタート・ゴールの札が切れないように */
+  overflow: visible;
+}
+.mz-floor {
+  fill: #fbf8f1;
+}
+.mz-walls line {
+  stroke: #2c3a33;
+  stroke-width: 0.09;
+  stroke-linecap: square;
+}
+.mz-trail {
+  fill: none;
+  stroke: #2f6f5e;
+  stroke-opacity: 0.55;
+  stroke-width: 0.34;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mz-head {
+  fill: #2f6f5e;
+  stroke: #ffffff;
+  stroke-width: 0.06;
+}
+.mz-tag rect {
+  fill: #ffffff;
+  stroke: #1d2320;
+  stroke-width: 0.02;
+}
+.mz-tag text {
+  font-size: 0.17px;
+  font-weight: 800;
+  fill: #1d2320;
+}
+.mz-pole {
+  stroke: #1d2320;
+  stroke-width: 0.04;
+}
+.mz-flag {
+  fill: #d64545;
+}
+
+@media (max-width: 900px) {
+  .mz {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .mz-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .mz-instruction br {
+    display: none;
+  }
+}
