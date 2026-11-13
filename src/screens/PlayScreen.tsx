@@ -1,4 +1,5 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { GameLoadBoundary } from '../components/GameLoadBoundary'
 import { unlockAudio } from '../core/sound'
 import { Stopwatch } from '../core/stopwatch'
 import type { Difficulty, GameDef, GameOutcome, PlayMode } from '../core/types'
@@ -13,17 +14,35 @@ interface Props {
   onQuit: () => void
 }
 
+/** 課題と同じ Suspense の中に置き、課題が実際に画面に出たときに知らせる */
+function OnShown({ onShown }: { onShown: () => void }) {
+  useEffect(() => {
+    onShown()
+  }, [onShown])
+  return null
+}
+
 /**
  * 課題の実施画面。やりかた表示 → 課題 の順に進む。
  * 一時停止中は課題を隠し、所要時間の計測も止める。
+ * 所要時間は課題が画面に出てから測る(読み込みにかかった時間は含めない)。
  */
 export function PlayScreen({ game, difficulty, mode, onFinish, onRestart, onQuit }: Props) {
   const [phase, setPhase] = useState<'intro' | 'playing'>('intro')
   const [paused, setPaused] = useState(false)
+  const [shown, setShown] = useState(false)
   const stopwatch = useRef(new Stopwatch())
   const Game = game.component
 
   useWakeLock(true)
+
+  // 課題が表示されていて、一時停止していない間だけ時間を測る
+  useEffect(() => {
+    if (phase === 'playing' && shown && !paused) stopwatch.current.start()
+    else stopwatch.current.pause()
+  }, [phase, shown, paused])
+
+  const handleShown = useCallback(() => setShown(true), [])
 
   const pause = useCallback(() => {
     stopwatch.current.pause()
@@ -32,7 +51,6 @@ export function PlayScreen({ game, difficulty, mode, onFinish, onRestart, onQuit
 
   const resume = () => {
     setPaused(false)
-    stopwatch.current.start()
   }
 
   // 別アプリに切り替えたり画面を閉じたら自動で一時停止
@@ -48,7 +66,6 @@ export function PlayScreen({ game, difficulty, mode, onFinish, onRestart, onQuit
   const start = () => {
     unlockAudio()
     setPhase('playing')
-    stopwatch.current.start()
   }
 
   const handleFinish = useCallback(
@@ -95,9 +112,12 @@ export function PlayScreen({ game, difficulty, mode, onFinish, onRestart, onQuit
         </main>
       ) : (
         <main className={`play-area ${paused ? 'is-hidden' : ''}`} aria-hidden={paused}>
-          <Suspense fallback={<p className="loading">よみこみ中…</p>}>
-            <Game difficulty={difficulty} mode={mode} paused={paused} onFinish={handleFinish} />
-          </Suspense>
+          <GameLoadBoundary onQuit={onQuit}>
+            <Suspense fallback={<p className="loading">よみこみ中…</p>}>
+              <OnShown onShown={handleShown} />
+              <Game difficulty={difficulty} mode={mode} paused={paused} onFinish={handleFinish} />
+            </Suspense>
+          </GameLoadBoundary>
         </main>
       )}
 

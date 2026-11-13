@@ -58,4 +58,6 @@ export interface GameDef {
   supportsPractice: boolean
   /** 未実装の課題は undefined(ホームで「準備中」表示) */
   component?: LazyExoticComponent<ComponentType<GameProps>>
+  /** 課題の画面を前もって読み込む(準備画面を開いたときに呼ぶ) */
+  preload?: () => void
 }

@@ -91,6 +91,6 @@ npm run deploy
 1. `src/games/<課題ID>/` に `GameProps` を受け取るコンポーネントを作る
 2. 終了時に `onFinish({ correct, total, errors, extra, details })` を呼ぶ(所要時間は共通側で計測)
 3. `paused` が true の間は、時間で進む処理を止める
-4. 説明文は課題フォルダの `meta.ts`(`summary`・`howTo`・`levels`)に書き、`registry.ts` で読み込んで `component: lazy(() => import(...))` を追加する。ホームのカードには短い `summary`、準備画面には詳しい `description` を出す
+4. 説明文は課題フォルダの `meta.ts`(`summary`・`howTo`・`levels`)に書き、`registry.ts` で読み込んで `...lazyGame(() => import(...))` を追加する(準備画面を開いた時点で先読みされる)。ホームのカードには短い `summary`、準備画面には詳しい `description` を出す
 5. 問題生成・正誤判定は `logic.ts` に分けてテストを書く
 6. 盤面などは `flex: 1; min-height: 0` で課題画面の高さに収め、1180×820・1024×768・820×1180(縦)で、はみ出さないことを確認する

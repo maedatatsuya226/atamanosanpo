@@ -435,6 +435,18 @@ rt {
   margin: auto;
   color: var(--ink-2);
 }
+.load-error {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+.load-error-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
 
 .overlay {
   position: fixed;

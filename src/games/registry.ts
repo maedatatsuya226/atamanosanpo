@@ -1,5 +1,5 @@
-import { lazy } from 'react'
-import type { DomainId, GameDef } from '../core/types'
+import { lazy, type ComponentType } from 'react'
+import type { DomainId, GameDef, GameProps } from '../core/types'
 // 各課題の説明文・難易度の説明(課題フォルダの meta.ts にある)
 import { META as COLOR_WORD_META } from './color-word/meta'
 import { META as NUMBER_STROKE_META } from './number-stroke/meta'
@@ -30,7 +30,7 @@ export const GAMES: readonly GameDef[] = [
       '6択・6マスの図・回転あり・裏返し(鏡像)の図が混ざる',
     ],
     supportsPractice: true,
-    component: lazy(() => import('./figure-match/FigureMatchGame')),
+    ...lazyGame(() => import('./figure-match/FigureMatchGame')),
   },
   {
     id: 'samegame',
@@ -40,7 +40,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '同じ色のつながりをタップして消していく',
     description: SAMEGAME_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./samegame/SamegameGame')),
+    ...lazyGame(() => import('./samegame/SamegameGame')),
   },
   {
     id: 'viewpoint',
@@ -50,7 +50,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '積み木を、どの方向から見た絵かを当てる',
     description: VIEWPOINT_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./viewpoint/ViewpointGame')),
+    ...lazyGame(() => import('./viewpoint/ViewpointGame')),
   },
   // ---- 見当識 ----
   {
@@ -67,7 +67,7 @@ export const GAMES: readonly GameDef[] = [
       '年・月・日・曜日の4問/数字を入力/ヒントなし',
     ],
     supportsPractice: false,
-    component: lazy(() => import('./orientation-date/OrientationDateGame')),
+    ...lazyGame(() => import('./orientation-date/OrientationDateGame')),
   },
   // ---- 記憶 ----
   {
@@ -84,7 +84,7 @@ export const GAMES: readonly GameDef[] = [
       '5個・ゆっくり・逆の順番で答える',
     ],
     supportsPractice: true,
-    component: lazy(() => import('./flash-sequence/FlashSequenceGame')),
+    ...lazyGame(() => import('./flash-sequence/FlashSequenceGame')),
   },
   {
     id: 'picture-memory',
@@ -94,7 +94,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '提示された絵を覚え、あとで選ぶ',
     description: PICTURE_MEMORY_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./picture-memory/PictureMemoryGame')),
+    ...lazyGame(() => import('./picture-memory/PictureMemoryGame')),
   },
   {
     id: 'story-memory',
@@ -104,7 +104,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '短い話を読み(聞き)、内容についての質問に答える',
     description: STORY_MEMORY_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./story-memory/StoryMemoryGame')),
+    ...lazyGame(() => import('./story-memory/StoryMemoryGame')),
   },
   // ---- 計画 ----
   {
@@ -121,7 +121,7 @@ export const GAMES: readonly GameDef[] = [
       '7×7・ゴール24・分岐6か所',
     ],
     supportsPractice: true,
-    component: lazy(() => import('./number-path/NumberPathGame')),
+    ...lazyGame(() => import('./number-path/NumberPathGame')),
   },
   {
     id: 'kana-order',
@@ -137,7 +137,7 @@ export const GAMES: readonly GameDef[] = [
       'あ〜の(25文字)・画面全体にばらばらに配置',
     ],
     supportsPractice: true,
-    component: lazy(() => import('./kana-order/KanaOrderGame')),
+    ...lazyGame(() => import('./kana-order/KanaOrderGame')),
   },
   {
     id: 'number-stroke',
@@ -147,7 +147,7 @@ export const GAMES: readonly GameDef[] = [
     summary: 'すべてのマスを一度ずつ通り、数字を順に結んでゴールする',
     description: NUMBER_STROKE_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./number-stroke/NumberStrokeGame')),
+    ...lazyGame(() => import('./number-stroke/NumberStrokeGame')),
   },
   // ---- 注意 ----
   {
@@ -164,7 +164,7 @@ export const GAMES: readonly GameDef[] = [
       '数字とかなを交互に25個(1→あ→2→い…→13)',
     ],
     supportsPractice: true,
-    component: lazy(() => import('./number-order/NumberOrderGame')),
+    ...lazyGame(() => import('./number-order/NumberOrderGame')),
   },
   {
     id: 'same-picture',
@@ -174,7 +174,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '見本と同じ絵をすべて見つけてタップする',
     description: SAME_PICTURE_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./same-picture/SamePictureGame')),
+    ...lazyGame(() => import('./same-picture/SamePictureGame')),
   },
   {
     id: 'stopwatch',
@@ -184,7 +184,7 @@ export const GAMES: readonly GameDef[] = [
     summary: '頭の中で数え、指定した秒数でストップを押す',
     description: STOPWATCH_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./stopwatch/StopwatchGame')),
+    ...lazyGame(() => import('./stopwatch/StopwatchGame')),
   },
   {
     id: 'color-word',
@@ -194,9 +194,34 @@ export const GAMES: readonly GameDef[] = [
     summary: '文字の意味と文字の色が合っているかを答える',
     description: COLOR_WORD_META.summary,
     supportsPractice: true,
-    component: lazy(() => import('./color-word/ColorWordGame')),
+    ...lazyGame(() => import('./color-word/ColorWordGame')),
   },
 ]
+
+/**
+ * 課題の画面を「必要になったら読み込む」形で登録する。
+ * preload() を準備画面で呼んでおくと、「はじめる」を押す前に読み込みが終わる。
+ * 読み込むのはプログラムだけで、問題は課題を始めるたびに新しく作られる。
+ */
+function lazyGame(load: () => Promise<{ default: ComponentType<GameProps> }>) {
+  let pending: ReturnType<typeof load> | null = null
+  const loadOnce = () => {
+    // 失敗したときは覚えておかず、次に呼ばれたら読み込みなおす
+    pending ??= load().catch((err: unknown) => {
+      pending = null
+      throw err
+    })
+    return pending
+  }
+  return {
+    component: lazy(loadOnce),
+    preload: () => {
+      loadOnce().catch(() => {
+        // 先読みの失敗は無視する(「はじめる」のときに改めて読み込み、失敗すれば画面で知らせる)
+      })
+    },
+  }
+}
 
 export function gamesByDomain(domain: DomainId): GameDef[] {
   return GAMES.filter((g) => g.domain === domain)

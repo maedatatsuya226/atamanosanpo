@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { DomainBadge } from '../components/DomainBadge'
 import { GameThumb } from '../components/GameThumb'
 import { DIFFICULTIES, type Difficulty, type GameDef, type PlayMode } from '../core/types'
@@ -12,6 +13,11 @@ interface Props {
 
 /** OT向けの準備画面。難易度を決めて開始する。 */
 export function SetupScreen({ game, difficulty, onChangeDifficulty, onStart, onBack }: Props) {
+  // 難易度を選んでいる間に課題の画面を読み込んでおき、「はじめる」ですぐ始められるようにする
+  useEffect(() => {
+    game.preload?.()
+  }, [game])
+
   return (
     <div className="screen setup">
       <header className="topbar">
