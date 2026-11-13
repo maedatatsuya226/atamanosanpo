@@ -70,7 +70,7 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
           onChange={(v) => update({ assist: v })}
         />
         <p className="setting-note">
-          道つなぎ・迷路・数字たどり・数字一筆書き・ドライブ迷路に出します。使った回数は結果に表示します。
+          道つなぎ・迷路・数字たどり・数字一筆書き・ドライブ迷路・手順ならべ・お会計・時計あわせに出します。使った回数は結果に表示します。
         </p>
 
         <section className="about">

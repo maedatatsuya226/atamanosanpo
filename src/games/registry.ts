@@ -1,14 +1,19 @@
 import { lazy, type ComponentType } from 'react'
 import type { DomainId, GameDef, GameProps } from '../core/types'
 // 各課題の説明文・難易度の説明(課題フォルダの meta.ts にある)
+import { META as CLOCK_META } from './clock/meta'
 import { META as COLOR_WORD_META } from './color-word/meta'
 import { META as DRIVE_MAZE_META } from './drive-maze/meta'
+import { META as GO_NOGO_META } from './go-nogo/meta'
 import { META as MAZE_META } from './maze/meta'
+import { META as N_BACK_META } from './n-back/meta'
 import { META as NUMBER_STROKE_META } from './number-stroke/meta'
+import { META as PAYMENT_META } from './payment/meta'
 import { META as PICTURE_MEMORY_META } from './picture-memory/meta'
 import { META as ROAD_ROTATE_META } from './road-rotate/meta'
 import { META as SAME_PICTURE_META } from './same-picture/meta'
 import { META as SAMEGAME_META } from './samegame/meta'
+import { META as STEP_ORDER_META } from './step-order/meta'
 import { META as STOPWATCH_META } from './stopwatch/meta'
 import { META as STORY_MEMORY_META } from './story-memory/meta'
 import { META as VIEWPOINT_META } from './viewpoint/meta'
@@ -82,6 +87,16 @@ export const GAMES: readonly GameDef[] = [
     supportsPractice: false,
     ...lazyGame(() => import('./orientation-date/OrientationDateGame')),
   },
+  {
+    id: 'clock',
+    domain: 'orientation',
+    title: '時計あわせ',
+    ...CLOCK_META,
+    summary: '言われた時刻に、アナログ時計の針を合わせる',
+    description: CLOCK_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./clock/ClockGame')),
+  },
   // ---- 記憶 ----
   {
     id: 'flash-sequence',
@@ -118,6 +133,16 @@ export const GAMES: readonly GameDef[] = [
     description: STORY_MEMORY_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./story-memory/StoryMemoryGame')),
+  },
+  {
+    id: 'n-back',
+    domain: 'memory',
+    title: 'Nバック',
+    ...N_BACK_META,
+    summary: 'いまの絵が、N枚まえと同じなら押す',
+    description: N_BACK_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./n-back/NBackGame')),
   },
   // ---- 計画 ----
   {
@@ -182,6 +207,16 @@ export const GAMES: readonly GameDef[] = [
     supportsPractice: true,
     ...lazyGame(() => import('./drive-maze/DriveMazeGame')),
   },
+  {
+    id: 'step-order',
+    domain: 'planning',
+    title: '手順ならべ',
+    ...STEP_ORDER_META,
+    summary: '生活の場面の手順カードを、正しい順に並べる',
+    description: STEP_ORDER_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./step-order/StepOrderGame')),
+  },
   // ---- 注意 ----
   {
     id: 'number-order',
@@ -228,6 +263,26 @@ export const GAMES: readonly GameDef[] = [
     description: COLOR_WORD_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./color-word/ColorWordGame')),
+  },
+  {
+    id: 'payment',
+    domain: 'attention',
+    title: 'お会計',
+    ...PAYMENT_META,
+    summary: '金額ちょうどになるよう、お金を選んで払う',
+    description: PAYMENT_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./payment/PaymentGame')),
+  },
+  {
+    id: 'go-nogo',
+    domain: 'attention',
+    title: 'Go/No-Go',
+    ...GO_NOGO_META,
+    summary: '決まった絵のときだけ押し、ほかはがまんする',
+    description: GO_NOGO_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./go-nogo/GoNoGoGame')),
   },
 ]
 

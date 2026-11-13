@@ -1,0 +1,103 @@
+.ck {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: 24px;
+}
+.ck-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.ck-face {
+  display: block;
+}
+.ck-rim {
+  fill: #ffffff;
+  stroke: #1d2320;
+  stroke-width: 4;
+}
+.ck-tick {
+  stroke: #4a524d;
+  stroke-width: 1;
+}
+.ck-tick.is-major {
+  stroke: #1d2320;
+  stroke-width: 2.5;
+}
+.ck-num {
+  font-size: 17px;
+  font-weight: 800;
+  fill: #1d2320;
+}
+.ck-hand {
+  stroke-linecap: round;
+}
+.ck-hour {
+  stroke: #1d2320;
+  stroke-width: 8;
+}
+.ck-minute {
+  stroke: #2f6f5e;
+  stroke-width: 5;
+}
+.ck-hand.is-ghost {
+  stroke: #e0a100;
+  opacity: 0.55;
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}
+.ck-pin {
+  fill: #1d2320;
+}
+
+.ck-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.ck-question {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.6;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+.ck-question strong {
+  font-size: 1.6rem;
+  color: var(--primary);
+}
+.ck-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ck-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+}
+.ck-row-label {
+  font-weight: 700;
+}
+.ck-row .btn {
+  min-width: calc(var(--tap) * 1.2);
+  font-size: 1.4rem;
+}
+.ck-side .feedback {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+
+@media (max-width: 900px) {
+  .ck {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+}

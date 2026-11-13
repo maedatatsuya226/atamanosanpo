@@ -552,7 +552,126 @@ function Maze() {
   )
 }
 
+function Clock() {
+  // 3じ を指した時計と、針を動かすボタン
+  return (
+    <Frame label="とけいの はりを あわせる">
+      <circle cx={58} cy={50} r={38} fill={SURF} stroke={INK} strokeWidth={3} />
+      {Array.from({ length: 12 }, (_, i) => {
+        const a = (i * 30 * Math.PI) / 180
+        return <line key={i} x1={58 + Math.sin(a) * 32} y1={50 - Math.cos(a) * 32} x2={58 + Math.sin(a) * 36} y2={50 - Math.cos(a) * 36} stroke={INK} strokeWidth={2} />
+      })}
+      <line x1={58} y1={50} x2={58} y2={20} stroke={PRIMARY} strokeWidth={3.5} strokeLinecap="round" />
+      <line x1={58} y1={50} x2={80} y2={50} stroke={INK} strokeWidth={5} strokeLinecap="round" />
+      <circle cx={58} cy={50} r={3.5} fill={INK} />
+      <rect x={106} y={26} width={22} height={20} rx={5} fill={PRIMARY_SOFT} stroke={PRIMARY} strokeWidth={1.5} />
+      <rect x={132} y={26} width={22} height={20} rx={5} fill={PRIMARY_SOFT} stroke={PRIMARY} strokeWidth={1.5} />
+      <path d="M 121 36 L 113 31 L 113 41 Z" fill={PRIMARY} transform="rotate(180 117 36)" />
+      <path d="M 147 36 L 139 31 L 139 41 Z" fill={PRIMARY} />
+      <text x={130} y={68} textAnchor="middle" fontSize={12} fontWeight={800} fill={INK}>
+        3じ
+      </text>
+    </Frame>
+  )
+}
+
+function NBack() {
+  // 絵が順に出て、ひとつ前と同じなら「おなじ！」
+  const seq = ['🍎', '🍌', '🍌']
+  return (
+    <Frame label="ひとつ まえと おなじ えなら おす">
+      {seq.map((e, i) => (
+        <g key={i} opacity={i === 2 ? 1 : 0.45}>
+          <rect x={12 + i * 48} y={12} width={40} height={44} rx={8} fill={SURF} stroke={i === 2 ? PRIMARY : LINE} strokeWidth={i === 2 ? 3 : 1.5} />
+          <Emoji x={32 + i * 48} y={34} size={24}>
+            {e}
+          </Emoji>
+        </g>
+      ))}
+      <path d="M 70 62 Q 94 74 118 62" fill="none" stroke={SUB} strokeWidth={1.5} strokeDasharray="3 3" />
+      <rect x={44} y={70} width={72} height={24} rx={8} fill={PRIMARY} />
+      <text x={80} y={82} dy="0.36em" textAnchor="middle" fontSize={12} fontWeight={800} fill="#fff">
+        おなじ！
+      </text>
+    </Frame>
+  )
+}
+
+function StepOrder() {
+  // お茶をいれる手順を 1・2・3 の順に並べる
+  const steps = ['🔥', '💧', '🍵']
+  return (
+    <Frame label="てじゅんの カードを じゅんばんに ならべる">
+      {steps.map((e, i) => (
+        <g key={i}>
+          <rect x={10 + i * 50} y={22} width={42} height={52} rx={8} fill={SURF} stroke={PRIMARY} strokeWidth={2} />
+          <text x={18 + i * 50} y={34} fontSize={10} fontWeight={800} fill={SUB}>
+            {i + 1}
+          </text>
+          <Emoji x={31 + i * 50} y={54} size={22}>
+            {e}
+          </Emoji>
+          {i < 2 && <path d={`M ${54 + i * 50} 48 l 4 0`} stroke={SUB} strokeWidth={2} />}
+        </g>
+      ))}
+    </Frame>
+  )
+}
+
+function Payment() {
+  // 金額と、出したお金
+  return (
+    <Frame label="きんがく ちょうどの おかねを はらう">
+      <rect x={20} y={8} width={120} height={30} rx={6} fill={SURF} stroke={INK} strokeWidth={2.5} />
+      <text x={80} y={23} dy="0.36em" textAnchor="middle" fontSize={17} fontWeight={800} fill={INK}>
+        160えん
+      </text>
+      <rect x={14} y={46} width={132} height={46} rx={10} fill="#efe6d2" />
+      <circle cx={42} cy={69} r={16} fill="#c3c9ce" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+      <text x={42} y={69} dy="0.36em" textAnchor="middle" fontSize={10} fontWeight={800} fill={INK}>
+        100
+      </text>
+      <circle cx={80} cy={69} r={15} fill="#cfd4d8" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+      <circle cx={80} cy={64} r={3.5} fill="#efe6d2" />
+      <text x={80} y={75} dy="0.36em" textAnchor="middle" fontSize={8} fontWeight={800} fill={INK}>
+        50
+      </text>
+      <circle cx={116} cy={69} r={15} fill="#c07a45" stroke="rgba(0,0,0,0.15)" strokeWidth={2} />
+      <text x={116} y={69} dy="0.36em" textAnchor="middle" fontSize={10} fontWeight={800} fill={INK}>
+        10
+      </text>
+    </Frame>
+  )
+}
+
+function GoNoGo() {
+  // りんごは押す、ハチは押さない
+  return (
+    <Frame label="きまった えの ときだけ おす">
+      <rect x={14} y={12} width={60} height={56} rx={10} fill={SURF} stroke="#1f7a4d" strokeWidth={3} />
+      <Emoji x={44} y={40} size={30}>
+        🍎
+      </Emoji>
+      <rect x={86} y={12} width={60} height={56} rx={10} fill={SURF} stroke="#b23a3a" strokeWidth={3} />
+      <Emoji x={116} y={40} size={30}>
+        🐝
+      </Emoji>
+      <text x={44} y={84} dy="0.36em" textAnchor="middle" fontSize={11} fontWeight={800} fill="#1f7a4d">
+        おす
+      </text>
+      <text x={116} y={84} dy="0.36em" textAnchor="middle" fontSize={11} fontWeight={800} fill="#b23a3a">
+        おさない
+      </text>
+    </Frame>
+  )
+}
+
 const THUMBS: Record<string, () => ReactNode> = {
+  clock: Clock,
+  'n-back': NBack,
+  'step-order': StepOrder,
+  payment: Payment,
+  'go-nogo': GoNoGo,
   maze: Maze,
   'road-rotate': RoadRotate,
   'drive-maze': DriveMaze,

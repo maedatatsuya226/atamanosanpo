@@ -1,0 +1,66 @@
+.nb {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.nb-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.nb-card {
+  flex: 1;
+  min-height: 0;
+  width: min(560px, 100%);
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border: 4px solid var(--line);
+  border-radius: var(--radius);
+  container-type: size;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.nb-picture {
+  font-size: min(12rem, 60cqh, 50cqw);
+  line-height: 1;
+}
+.nb-ready {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.nb-card.is-hit {
+  border-color: var(--ok);
+  background: var(--ok-soft);
+}
+.nb-card.is-false-alarm {
+  border-color: var(--ng);
+  background: var(--ng-soft);
+}
+.nb-card.is-miss {
+  border-color: #e0a100;
+  background: rgba(224, 161, 0, 0.15);
+}
+.nb-note {
+  min-height: 1.6em;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.nb-note.is-hit {
+  color: var(--ok);
+}
+.nb-note.is-false-alarm {
+  color: var(--ng);
+}
+.nb-press {
+  flex: none;
+  width: min(560px, 100%);
+  min-height: calc(var(--tap) * 1.5);
+  font-size: 1.8rem;
+  touch-action: manipulation;
+}

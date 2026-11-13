@@ -1,0 +1,145 @@
+.so {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 270px);
+  gap: 24px;
+}
+.so-main {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+}
+.so-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.so-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+}
+.so-title-icon {
+  font-size: 2rem;
+}
+.so-note {
+  font-weight: 700;
+  color: var(--ng);
+}
+
+/* 並べる枠 */
+.so-slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.so-slot {
+  position: relative;
+  min-height: 124px;
+  border: 3px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  display: grid;
+}
+.so-slot-num {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ink-2);
+  z-index: 1;
+}
+.so-slot:not(.is-filled) .so-slot-num {
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 2.4rem;
+  color: var(--line);
+}
+.so-slot.is-filled {
+  border-style: solid;
+  border-color: transparent;
+  background: transparent;
+}
+.so-slot.is-right .so-card {
+  border-color: var(--ok);
+  background: var(--ok-soft);
+}
+.so-slot.is-wrong .so-card {
+  border-color: var(--ng);
+  background: var(--ng-soft);
+  animation: shake 0.3s ease;
+}
+.so-slot.is-hint {
+  border-color: #e0a100;
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}
+
+/* カード */
+.so-pool {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+.so-card {
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  font: inherit;
+  text-align: center;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.so-card:disabled {
+  cursor: default;
+  color: inherit;
+}
+.so-card.is-hint {
+  border-color: #e0a100;
+  border-width: 4px;
+  background: rgba(224, 161, 0, 0.18);
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}
+.so-card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.so-card-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.so-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.so-actions .feedback {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+
+@media (max-width: 900px) {
+  .so {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+}

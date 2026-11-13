@@ -81,7 +81,7 @@ npm run deploy
 | `src/core/` | 型、設定、効果音、計測タイマー、乱数など共通部品 |
 | `src/screens/` | ホーム・難易度選択・実施・結果・設定の各画面 |
 | `src/components/` | 数字パッド、ふりがななど共通の部品 |
-| `src/games/registry.ts` | 全17課題の一覧(未実装は「準備中」表示) |
+| `src/games/registry.ts` | 全22課題の一覧(未実装は「準備中」表示) |
 | `src/games/<課題ID>/` | 各課題。`logic.ts`(問題生成・判定)とテスト、画面コンポーネント |
 | `public/_headers` | Cloudflare Pages の応答ヘッダー |
 | `scripts/make-icons.mjs` | アプリアイコンの生成(`node scripts/make-icons.mjs`) |
