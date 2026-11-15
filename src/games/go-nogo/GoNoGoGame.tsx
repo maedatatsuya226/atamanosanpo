@@ -101,7 +101,12 @@ export default function GoNoGoGame({ difficulty, mode, paused, onFinish }: GameP
       </div>
 
       <div className={`gn-card ${flash ? `is-${flash}` : ''}`}>
-        {phase === 'show' && <span className="gn-picture">{items[index].picture}</span>}
+        {/* 1枚ごとに作りなおして、前の絵の表示を残さない */}
+        {phase === 'show' && (
+          <span key={index} className="gn-picture">
+            {items[index].picture}
+          </span>
+        )}
         {phase === 'ready' && <span className="gn-ready">はじめます</span>}
       </div>
       <p className={`gn-note ${flash ? `is-${flash}` : ''}`} role="status" aria-live="polite">

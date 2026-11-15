@@ -107,7 +107,8 @@ export default function NBackGame({ difficulty, mode, paused, onFinish }: GamePr
 
       <div className={`nb-card ${flash ? `is-${flash}` : ''}`}>
         {phase === 'show' && (
-          <span className="nb-picture" aria-label="いまの え">
+          // 1枚ごとに作りなおして、前の絵の表示を残さない
+          <span key={index} className="nb-picture" aria-label="いまの え">
             {seq[index]}
           </span>
         )}

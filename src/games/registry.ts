@@ -8,14 +8,18 @@ import { META as GO_NOGO_META } from './go-nogo/meta'
 import { META as MAZE_META } from './maze/meta'
 import { META as N_BACK_META } from './n-back/meta'
 import { META as NUMBER_STROKE_META } from './number-stroke/meta'
+import { META as PATTERN_COPY_META } from './pattern-copy/meta'
 import { META as PAYMENT_META } from './payment/meta'
 import { META as PICTURE_MEMORY_META } from './picture-memory/meta'
 import { META as ROAD_ROTATE_META } from './road-rotate/meta'
 import { META as SAME_PICTURE_META } from './same-picture/meta'
+import { META as SEASON_META } from './season/meta'
+import { META as SHOPPING_MEMO_META } from './shopping-memo/meta'
 import { META as IRO_KESHI_META } from './iro-keshi/meta'
 import { META as STEP_ORDER_META } from './step-order/meta'
 import { META as STOPWATCH_META } from './stopwatch/meta'
 import { META as STORY_MEMORY_META } from './story-memory/meta'
+import { META as TURN_GUIDE_META } from './turn-guide/meta'
 import { META as VIEWPOINT_META } from './viewpoint/meta'
 
 /**
@@ -70,6 +74,26 @@ export const GAMES: readonly GameDef[] = [
     supportsPractice: true,
     ...lazyGame(() => import('./road-rotate/RoadRotateGame')),
   },
+  {
+    id: 'turn-guide',
+    domain: 'spatial',
+    title: '右・左の道案内',
+    ...TURN_GUIDE_META,
+    summary: '車から見て、曲がり角を右・左・まっすぐのどれに進むか答える',
+    description: TURN_GUIDE_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./turn-guide/TurnGuideGame')),
+  },
+  {
+    id: 'pattern-copy',
+    domain: 'spatial',
+    title: '模様づくり',
+    ...PATTERN_COPY_META,
+    summary: '見本と同じ模様になるよう、マスを色で塗る',
+    description: PATTERN_COPY_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./pattern-copy/PatternCopyGame')),
+  },
   // ---- 見当識 ----
   {
     id: 'orientation-date',
@@ -96,6 +120,16 @@ export const GAMES: readonly GameDef[] = [
     description: CLOCK_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./clock/ClockGame')),
+  },
+  {
+    id: 'season',
+    domain: 'orientation',
+    title: '季節・行事あて',
+    ...SEASON_META,
+    summary: '季節のものや行事の絵から、季節や月を答える',
+    description: SEASON_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./season/SeasonGame')),
   },
   // ---- 記憶 ----
   {
@@ -143,6 +177,16 @@ export const GAMES: readonly GameDef[] = [
     description: N_BACK_META.summary,
     supportsPractice: true,
     ...lazyGame(() => import('./n-back/NBackGame')),
+  },
+  {
+    id: 'shopping-memo',
+    domain: 'memory',
+    title: '買い物メモの記憶',
+    ...SHOPPING_MEMO_META,
+    summary: '買い物メモを覚えて、お店の棚から品物を選ぶ',
+    description: SHOPPING_MEMO_META.summary,
+    supportsPractice: true,
+    ...lazyGame(() => import('./shopping-memo/ShoppingMemoGame')),
   },
   // ---- 計画 ----
   {

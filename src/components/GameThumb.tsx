@@ -666,7 +666,98 @@ function GoNoGo() {
   )
 }
 
+function Season() {
+  // 季節の絵と「はる・なつ・あき・ふゆ」
+  return (
+    <Frame label="きせつの えから きせつを こたえる">
+      <rect x={52} y={6} width={56} height={50} rx={8} fill={SURF} stroke={LINE} strokeWidth={1.5} />
+      <Emoji x={80} y={31} size={30}>
+        🎋
+      </Emoji>
+      {['はる', 'なつ', 'あき', 'ふゆ'].map((t, i) => (
+        <g key={t}>
+          <rect x={8 + i * 37} y={64} width={33} height={26} rx={6} fill={i === 1 ? PRIMARY_SOFT : SURF} stroke={i === 1 ? PRIMARY : SUB} strokeWidth={i === 1 ? 2.5 : 1.2} />
+          <text x={24.5 + i * 37} y={77} dy="0.36em" textAnchor="middle" fontSize={11} fontWeight={800} fill={INK}>
+            {t}
+          </text>
+        </g>
+      ))}
+    </Frame>
+  )
+}
+
+function TurnGuide() {
+  // 下向きの車が十字路でどちらへ曲がるか(車から見て右は画面の左)
+  return (
+    <Frame label="くるまから みて みぎ ひだりを こたえる">
+      <rect x={4} y={4} width={152} height={92} rx={8} fill="#e3ecd6" />
+      <path d="M 70 4 V 96 M 4 56 H 156" stroke="#9aa0a6" strokeWidth={16} />
+      <path d="M 70 22 V 56 H 22" fill="none" stroke="#e0a100" strokeWidth={3} strokeDasharray="1 5" strokeLinecap="round" />
+      <g transform="translate(70 22) rotate(90)">
+        <rect x={-8} y={-5.5} width={16} height={11} rx={3} fill="#d64545" stroke="#7a1f1f" strokeWidth={0.8} />
+        <rect x={2} y={-4} width={3} height={8} rx={1} fill="#cfe6f7" />
+      </g>
+      <line x1={22} y1={66} x2={22} y2={44} stroke={INK} strokeWidth={1.6} />
+      <path d="M 22 44 L 30 48 L 22 52 Z" fill="#d64545" />
+      <rect x={100} y={68} width={50} height={22} rx={6} fill={PRIMARY_SOFT} stroke={PRIMARY} strokeWidth={2} />
+      <text x={125} y={79} dy="0.36em" textAnchor="middle" fontSize={11} fontWeight={800} fill={PRIMARY}>
+        ➡ みぎ
+      </text>
+    </Frame>
+  )
+}
+
+function ShoppingMemo() {
+  // 買い物メモと棚の品物
+  return (
+    <Frame label="かいもの メモを おぼえて しなものを えらぶ">
+      <rect x={10} y={10} width={58} height={80} rx={4} fill="#fffdf4" stroke="#d9cfa8" strokeWidth={1.5} />
+      {['ぎゅうにゅう', 'りんご', 'パン'].map((t, i) => (
+        <text key={t} x={16} y={30 + i * 20} fontSize={8.5} fontWeight={800} fill={INK}>
+          ・{t}
+        </text>
+      ))}
+      <rect x={78} y={14} width={74} height={72} rx={6} fill="#efe6d2" />
+      {['🥛', '🧀', '🍎', '🍞'].map((e, i) => (
+        <g key={e}>
+          <rect x={84 + (i % 2) * 34} y={20 + Math.floor(i / 2) * 32} width={28} height={28} rx={5} fill={SURF} stroke={i === 1 ? LINE : PRIMARY} strokeWidth={i === 1 ? 1 : 2} />
+          <Emoji x={98 + (i % 2) * 34} y={34 + Math.floor(i / 2) * 32} size={16}>
+            {e}
+          </Emoji>
+        </g>
+      ))}
+    </Frame>
+  )
+}
+
+function PatternCopy() {
+  // 見本と、塗っている途中の模様
+  const model = [1, 0, 2, 0, 1, 0, 2, 0, 1]
+  const work = [1, 0, 2, 0, 0, 0, 0, 0, 0]
+  const fill = ['#ffffff', '#d64545', '#2f6fd0']
+  const board = (x0: number, p: number[]) =>
+    p.map((v, i) => <rect key={`${x0}-${i}`} x={x0 + (i % 3) * 18} y={26 + Math.floor(i / 3) * 18} width={17} height={17} fill={fill[v]} />)
+  return (
+    <Frame label="みほんと おなじ もようを ぬる">
+      <rect x={17} y={25} width={55} height={55} fill={INK} />
+      {board(18, model)}
+      <rect x={89} y={25} width={55} height={55} fill={INK} />
+      {board(90, work)}
+      <text x={45} y={16} textAnchor="middle" fontSize={9} fontWeight={800} fill={SUB}>
+        みほん
+      </text>
+      <text x={117} y={16} textAnchor="middle" fontSize={9} fontWeight={800} fill={SUB}>
+        つくる
+      </text>
+    </Frame>
+  )
+}
+
 const THUMBS: Record<string, () => ReactNode> = {
+  season: Season,
+  'turn-guide': TurnGuide,
+  'shopping-memo': ShoppingMemo,
+  'pattern-copy': PatternCopy,
   clock: Clock,
   'n-back': NBack,
   'step-order': StepOrder,

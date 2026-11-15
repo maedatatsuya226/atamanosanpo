@@ -1,0 +1,153 @@
+.tg {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+  gap: 24px;
+}
+.tg-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.tg-map {
+  display: block;
+}
+.tg-ground {
+  fill: #e3ecd6;
+}
+.tg-road line {
+  stroke: #9aa0a6;
+  stroke-width: 0.34;
+}
+.tg-route {
+  fill: none;
+  stroke: #e0a100;
+  stroke-width: 0.12;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 0.02 0.2;
+}
+.tg-corner-num circle {
+  fill: #2f6f5e;
+}
+.tg-corner-num text {
+  font-size: 0.22px;
+  font-weight: 800;
+  fill: #fff;
+}
+.tg-answer rect {
+  fill: #fff;
+  stroke: #1f7a4d;
+  stroke-width: 0.03;
+}
+.tg-answer text {
+  font-size: 0.18px;
+  font-weight: 800;
+  fill: #1f7a4d;
+}
+.tg-ghost {
+  opacity: 0.45;
+}
+.tg-pole {
+  stroke: #1d2320;
+  stroke-width: 0.04;
+}
+.tg-flag {
+  fill: #d64545;
+}
+
+.tg-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.tg-side .feedback {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+.tg-slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tg-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 10px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+}
+.tg-slot-num {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+}
+.tg-slot.is-right {
+  border-color: var(--ok);
+  background: var(--ok-soft);
+}
+.tg-slot.is-wrong {
+  border-color: var(--ng);
+  background: var(--ng-soft);
+}
+.tg-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.tg-rel {
+  min-height: calc(var(--tap) * 1.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  color: var(--primary);
+  font-size: 1rem;
+}
+.tg-rel-arrow {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.tg-rel.is-wrong {
+  border-color: var(--ng);
+  background: var(--ng-soft);
+  color: var(--ng);
+  animation: shake 0.3s ease;
+}
+.tg-multi-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+/* 横の欄がせまくても、ことばの途中で折り返さない */
+.tg-multi-actions .btn {
+  padding: 0 8px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .tg {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+}

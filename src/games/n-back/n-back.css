@@ -22,10 +22,12 @@
   border: 4px solid var(--line);
   border-radius: var(--radius);
   container-type: size;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  /* 絵がはみ出しても枠の外に描かない。色の切りかえは一瞬で(アニメーションは iPad で描き残しの原因になりやすい) */
+  overflow: hidden;
 }
 .nb-picture {
-  font-size: min(12rem, 60cqh, 50cqw);
+  /* 絵文字の絵は約160pxまでが元の大きさ。それ以上に拡大すると iPad で前の絵の切れ端が残ることがあるので、160px までにする */
+  font-size: min(160px, 55cqh, 45cqw);
   line-height: 1;
 }
 .nb-ready {

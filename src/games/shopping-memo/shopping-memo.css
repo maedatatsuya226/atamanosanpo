@@ -1,0 +1,198 @@
+.sm {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.sm-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.sm-head .task-instruction,
+.sm-head .feedback {
+  min-height: 2.6rem;
+}
+.sm-stage {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  background: var(--bg);
+}
+
+/* 買い物メモ(罫線のある紙) */
+.sm-memo {
+  width: min(460px, 100%);
+  padding: 18px 28px 22px;
+  background: #fffdf4;
+  border: 2px solid #d9cfa8;
+  border-radius: 6px;
+  box-shadow: 0 3px 0 #e8e0c2;
+}
+.sm-memo-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ink-2);
+  border-bottom: 2px solid #d9cfa8;
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+}
+.sm-memo ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sm-memo li {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.75;
+  border-bottom: 1px dashed #e2d9b6;
+}
+.sm-memo li::before {
+  content: '・';
+  color: var(--ink-2);
+}
+
+/* 待ち時間 */
+.sm-wait {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  width: min(240px, 60vmin);
+  aspect-ratio: 1;
+  align-content: center;
+  flex-wrap: wrap;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 4px solid var(--line);
+  color: var(--ink-2);
+}
+.sm-wait-num {
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.sm-wait-unit {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* お店の棚 */
+.sm-shelf {
+  width: min(1000px, 100%);
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  background: #efe6d2;
+  border-radius: var(--radius);
+}
+.sm-item {
+  position: relative;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  font: inherit;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  border-radius: var(--radius-sm);
+  touch-action: manipulation;
+}
+button.sm-item {
+  cursor: pointer;
+}
+.sm-item-icon {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.sm-item-name {
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+.sm-item.is-selected {
+  background: var(--primary-soft);
+  border: 5px solid var(--primary);
+}
+.sm-item.is-hit {
+  background: var(--ok-soft);
+  border: 5px solid var(--ok);
+}
+.sm-item.is-miss {
+  border: 5px dashed var(--ok);
+}
+.sm-item.is-false {
+  background: var(--ng-soft);
+  border: 5px solid var(--ng);
+}
+.sm-item.is-faded {
+  opacity: 0.4;
+}
+.sm-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #fff;
+}
+.sm-badge-sel {
+  background: var(--primary);
+}
+.sm-badge-ok {
+  background: var(--ok);
+}
+.sm-item.is-miss .sm-badge-ok {
+  background: var(--surface);
+  color: var(--ok);
+  border: 3px solid var(--ok);
+}
+.sm-badge-ng {
+  background: var(--ng);
+}
+
+.sm-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  min-height: calc(var(--tap) + 8px);
+}
+.sm-legend {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink-2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sm-legend-ok,
+.sm-legend-ng {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.sm-legend-ok {
+  color: var(--ok);
+}
+.sm-legend-ng {
+  color: var(--ng);
+  margin-left: 12px;
+}

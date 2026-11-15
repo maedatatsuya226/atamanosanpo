@@ -1,0 +1,97 @@
+.ss {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.ss-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.ss-card {
+  flex: 1;
+  min-height: 0;
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  container-type: size;
+  overflow: hidden;
+}
+/* 絵文字は160pxまで(それ以上の拡大は iPad で描き残しが出ることがある) */
+.ss-picture,
+.ss-now {
+  font-size: min(160px, 50cqh, 40cqw);
+  line-height: 1;
+}
+.ss-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.ss .feedback {
+  width: min(720px, 100%);
+}
+
+.ss-choices {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  gap: 12px;
+  width: min(820px, 100%);
+}
+.ss-choices.is-many {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.ss-choice {
+  min-height: calc(var(--tap) * 1.3);
+  font-size: 1.6rem;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  color: var(--ink);
+}
+.ss-choices.is-many .ss-choice {
+  min-height: var(--tap);
+  font-size: 1.3rem;
+}
+/* 季節は色でも区別しやすく(文字が主) */
+.ss-season-spring {
+  border-color: #e59ab1;
+}
+.ss-season-summer {
+  border-color: #3f9bd6;
+}
+.ss-season-autumn {
+  border-color: #d0853a;
+}
+.ss-season-winter {
+  border-color: #8aa4b8;
+}
+.ss-choice.is-wrong {
+  background: var(--ng-soft);
+  border-color: var(--ng);
+  color: var(--ng);
+  opacity: 1;
+}
+.ss-choice.is-shake {
+  animation: shake 0.3s ease;
+}
+.ss-choice.is-gone {
+  visibility: hidden;
+}
+.ss-choice.is-answer {
+  background: var(--ok-soft);
+  border-color: var(--ok);
+  color: var(--ok);
+  opacity: 1;
+}
+.ss-assist {
+  width: min(520px, 100%);
+}

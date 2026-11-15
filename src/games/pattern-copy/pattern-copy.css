@@ -1,0 +1,120 @@
+.pc {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 270px);
+  gap: 24px;
+}
+.pc-stage {
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+}
+.pc-boards {
+  display: flex;
+  align-items: flex-start;
+}
+.pc-board-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.pc-label {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ink-2);
+  height: 30px;
+}
+.pc-board {
+  display: grid;
+  border: 3px solid var(--ink);
+  background: var(--ink);
+  gap: 2px;
+}
+.pc-cell {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-weight: 800;
+  line-height: 1;
+  touch-action: manipulation;
+}
+button.pc-cell {
+  cursor: pointer;
+}
+button.pc-cell:disabled {
+  cursor: default;
+}
+.pc-cell.is-wrong {
+  box-shadow: inset 0 0 0 5px var(--ng);
+}
+.pc-cell.is-hint {
+  box-shadow: inset 0 0 0 5px #e0a100;
+  animation: hint-pulse 0.9s ease-in-out infinite;
+}
+
+.pc-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+.pc-side .feedback {
+  font-size: 1.05rem;
+  padding: 8px 12px;
+  min-height: 3.6em;
+}
+.pc-palette {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.pc-swatch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap);
+  padding: 6px 10px;
+  font: inherit;
+  font-weight: 800;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.pc-swatch.is-selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+.pc-swatch-chip {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+.pc-actions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+}
+/* ことばの途中で折り返さない */
+.pc-actions .btn {
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .pc {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+}
